@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">The Woking Dead</string>
+
+    <string name="about">Version 0.Alpha</string>
+
+    <string name="about_label">About</string>
+    <string name="exit_label">Exit</string>
+
+    <string name="about_shortcut">a</string>
+    <string name="exit_shortcut">x</string>
 </resources>
