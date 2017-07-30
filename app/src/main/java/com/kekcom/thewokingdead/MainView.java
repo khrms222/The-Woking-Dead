@@ -25,13 +25,10 @@ import android.view.SurfaceView;
 
 import com.kekcom.thewokingdead.data.GameLevelData;
 import com.kekcom.thewokingdead.data.GameStageData;
-<<<<<<< HEAD
 
 /**
  * Created by Marcus on 7/29/2017.
  */
-=======
->>>>>>> 9813b9384522f686024f971a6419875431882809
 
 public class MainView extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -537,13 +534,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mPlayerLevel = level;
 
         mGameLevelData = new GameLevelData(context);
-        mGameStageData = new GameStageData(context);
 
-<<<<<<< HEAD
         mFloorBaseTemplates = mGameLevelData.getLevelData();
-=======
-        mFloorBaseTemplates = mGameLevelData.getGameLevelData();
->>>>>>> 9813b9384522f686024f971a6419875431882809
 
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
