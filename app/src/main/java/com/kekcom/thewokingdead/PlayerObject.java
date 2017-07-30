@@ -14,8 +14,6 @@ public class PlayerObject extends GameObject{
     private int mUnmodifiedX = 0;
     private int mUnmodifiedY = 0;
 
-
-
     long fps;
 
     private long timeThisFrame;
@@ -38,6 +36,8 @@ public class PlayerObject extends GameObject{
 
     private RectF whereToDraw = new RectF(this.getX(), this.getY(), this.getX() + frameWidth, frameHeight + this.getY());
 
+    private int numOfLives;
+
     public PlayerObject(Context context, int drawable)
     {
         super(context, drawable);
@@ -46,6 +46,8 @@ public class PlayerObject extends GameObject{
         this.setBitmap(Bitmap.createScaledBitmap(this.getBitmap(), (frameWidth) * frameCount, (frameHeight*4), false));
         this.mWidth = frameWidth;
         this.mHeight = frameHeight;
+
+        numOfLives = 3;
 
         Log.d("testlog", "" + Bitmap.createScaledBitmap(this.getBitmap(), frameWidth * frameCount, frameHeight, false).getWidth());
     }
@@ -117,5 +119,13 @@ public class PlayerObject extends GameObject{
 
     public void setFps(long fps) {
         this.fps = fps;
+    }
+
+    public void setNumOfLives(int numOfLives){
+        this.numOfLives = numOfLives;
+    }
+
+    public int getNumOfLives(){
+        return numOfLives;
     }
 }
