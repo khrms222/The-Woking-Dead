@@ -486,8 +486,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
 
-        mPlayerStartTileX = Integer.parseInt(gameLevelData.get(GameStageData.getFieldIdPlayerStartTileX()));
-        mPlayerStartTileY = Integer.parseInt(gameLevelData.get(GameStageData.getFieldIdPlayerStartTileY()));
+        mPlayerStartTileX = GameStageData.getFieldIdPlayerStartTileX();
+        mPlayerStartTileY = GameStageData.getFieldIdPlayerStartTileY();
 
         mGameTiles.clear();
 

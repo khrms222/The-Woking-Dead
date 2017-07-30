@@ -51,7 +51,7 @@ public class GameStageData extends GameDAO {
             }
         }
         Boolean check = true;
-        while (check) {
+        /*while (check) {
             int x = (int) (Math.random() * size);
             int y = (int) (Math.random() * size);
             if (gw[x][y] == "00") {
@@ -59,7 +59,7 @@ public class GameStageData extends GameDAO {
                 FIELD_ID_PLAYER_START_TILE_Y = y;
                 check = false;
             }
-        }
+        }*/
         return gw;
     }
 
