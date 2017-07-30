@@ -35,7 +35,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 {
     public static final int STATE_RUNNING = 1;
     public static final int STATE_PAUSED = 2;
-    private static final int CONTROLS_PADDING = 10;
+    private static final int UI_PADDING = 50;
     private static final int START_STAGE = 1;
     private static final int START_LEVEL = 1;
     private static final int DIRECTION_UP = 1;
@@ -282,6 +282,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         if (enemy.getRect().intersect(mPlayerUnit.getRect()) && enemy.timeToAttack()) {
                             enemy.setLastTimeAttacked(System.currentTimeMillis());
                             iter.remove();
+
+                            mLastStatusMessage = "Enemy hit you!";
                         }
                     }
 
@@ -289,6 +291,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         mGameRun = false;
 
                         Intent i = new Intent(mGameContext, GameOverActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         mGameContext.startActivity(i);
                     }
 
@@ -808,6 +811,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                 drawPlayerLives(canvas);
 
+                mUiTextPaint.setColor(Color.argb(255, 255, 0, 0));
                 canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
             }
         }
