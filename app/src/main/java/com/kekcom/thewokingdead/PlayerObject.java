@@ -10,19 +10,12 @@ public class PlayerObject extends GameObject{
     public static final int SPEED = 6;
 
     Context mContext;
-
-    private int mUnmodifiedX = 0;
-    private int mUnmodifiedY = 0;
-
-
-
     long fps;
-
-    private long timeThisFrame;
-
     //boolean isMoving = false;
     float walkPerSecond = 250;
-
+    private int mUnmodifiedX = 0;
+    private int mUnmodifiedY = 0;
+    private long timeThisFrame;
     private int frameWidth = 80;
     private int frameHeight = 110;
 
@@ -107,15 +100,24 @@ public class PlayerObject extends GameObject{
 
     }
 
-    public void setTimeThisFrame(long timeThisFrame) {
-        this.timeThisFrame = timeThisFrame;
-    }
-
     public long getTimeThisFrame() {
         return timeThisFrame;
     }
 
+    public void setTimeThisFrame(long timeThisFrame) {
+        this.timeThisFrame = timeThisFrame;
+    }
+
     public void setFps(long fps) {
         this.fps = fps;
+    }
+
+    public int getFrameHeight() {
+        return frameHeight;
+    }
+
+    public int getFrameWidth() {
+
+        return frameWidth;
     }
 }
