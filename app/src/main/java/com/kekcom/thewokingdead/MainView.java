@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Handler;
@@ -503,6 +504,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         return true;
     }
 
+    /*
     private void setControlsStart() {
         if (mCtrlDownArrow == null) {
             mCtrlDownArrow = new MainUi(mGameContext, R.drawable.ctrl_down_arrow);
@@ -530,6 +532,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             mCtrlRightArrow.setY(mCtrlLeftArrow.getY());
         }
     }
+    */
 
     private void setPlayerStart() {
         if (mPlayerUnit == null) {
@@ -795,6 +798,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 }
 
                 //drawControls(canvas);
+
+                mUiTextPaint.setColor(Color.argb(255, 0, 0, 0));
+
+                Path path = new Path();
+                path.addCircle(mPlayerUnit.getX() + mPlayerUnit.getWidth()/2, mPlayerUnit.getY() + mPlayerUnit.getHeight()/2, mPlayerUnit.getWidth()*3, Path.Direction.CW);
+                path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+                canvas.drawPath(path, mUiTextPaint);
+
                 drawPlayerLives(canvas);
 
                 canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
