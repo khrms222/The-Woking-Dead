@@ -534,6 +534,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mPlayerLevel = level;
 
         mGameLevelData = new GameLevelData(context);
+        mGameStageData = new GameStageData(context);
 
         mFloorBaseTemplates = mGameLevelData.getLevelData();
 
