@@ -23,6 +23,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * Created by Marcus on 7/29/2017.
+ */
+
 public class MainView extends SurfaceView implements SurfaceHolder.Callback
 {
     private static final int CONTROLS_PADDING = 10;
