@@ -550,10 +550,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mUiTextPaint.setAntiAlias(true);
 
 
-        Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
-        if (uiTypeface != null) {
-            mUiTextPaint.setTypeface(uiTypeface);
-        }
+//        Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
+//        if (uiTypeface != null) {
+//            mUiTextPaint.setTypeface(uiTypeface);
+//        }
 
         mUiTextPaint.setTextSize(mGameContext.getApplicationContext().getResources().getDimensionPixelSize(R.dimen.ui_text_size));
 
