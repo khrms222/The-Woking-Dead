@@ -543,7 +543,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mFloorBaseTemplates = mGameLevelData.getLevelData();
 =======
 <<<<<<< HEAD
+<<<<<<< HEAD
         mFloorBaseTemplates = mGameLevelData.getLevelData();
+=======
+        mFloorBaseTemplates = mGameLevelData.getGameLevelData();
+>>>>>>> 9813b9384522f686024f971a6419875431882809
+>>>>>>> 1a51740dfd29575c24027ab5642350ca4dbe29f6
 =======
         mFloorBaseTemplates = mGameLevelData.getGameLevelData();
 >>>>>>> 9813b9384522f686024f971a6419875431882809
