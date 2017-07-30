@@ -8,4 +8,11 @@
 
     <string name="about_shortcut">a</string>
     <string name="exit_shortcut">x</string>
+
+    <string name="back">Back</string>
+    <string name="play_again">Play Again</string>
+    <string name="play_button">Play</string>
+    <string name="game_over">Game Over</string>
+    <string name="help">Help</string>
+    <string name="exit_button">X</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.kekcom.thewokingdead;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import com.kekcom.thewokingdead.data.GameStageData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -96,6 +98,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private int mTileWidth = 0;
     private int mTileHeight = 0;
     private GameThread thread;
+
+    private WeaponObject playerWeapon;
+
+    private List<PlayerLife> playerLives;
 
     public MainView(Context context, GameActivity activity, int stage, int level, float screenDensity) {
         super(context);
@@ -176,6 +182,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         canvas.drawBitmap(mCtrlRightArrow.getBitmap(), mCtrlRightArrow.getX(), mCtrlRightArrow.getY(), null);
     }
 
+    private void drawPlayerLives(Canvas canvas){
+        for(PlayerLife playerLife : playerLives){
+            canvas.drawBitmap(playerLife.getBitmap(), playerLife.getX(), playerLife.getY(), null);
+        }
+    }
+
     private void updatePlayerUnit() {
         FloorBase collisionTile = null;
 
@@ -198,6 +210,17 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             }
 
             collisionTile = getCollision(newX, newY, mPlayerUnit.getWidth(), mPlayerUnit.getHeight());
+
+            				/*
+				Iterator<EnemyUnit> iter = mEnemyList.iterator();
+				while (iter.hasNext()) {
+					EnemyUnit enemy = iter.next();
+
+					if (mPlayerUnit.getRect().intersect(enemy.getRect())) {
+						iter.remove();
+					}
+				}
+				*/
 
             if ((collisionTile != null)
                     && collisionTile.isBlockerTile()) {
@@ -252,6 +275,22 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                     collisionTile = getCollision(newX, newY, enemy.getWidth(), enemy.getHeight());
 
+                    Iterator<PlayerLife> iter = playerLives.iterator();
+                    while (iter.hasNext()) {
+                        iter.next();
+                        if (enemy.getRect().intersect(mPlayerUnit.getRect()) && enemy.timeToAttack()) {
+                            enemy.setLastTimeAttacked(System.currentTimeMillis());
+                            iter.remove();
+                        }
+                    }
+
+                    if(playerLives.size() == 0){
+                        mGameRun = false;
+
+                        Intent i = new Intent(mGameContext, GameOverActivity.class);
+                        mGameContext.startActivity(i);
+                    }
+
                     if ((collisionTile != null) && collisionTile.isBlockerTile()) {
                         handleTileCollision(collisionTile);
 
@@ -265,6 +304,65 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 enemy.setTimeToChangeDirection(true);
             }
 
+        }
+    }
+
+    public void updatePlayerWeapon(){
+
+        FloorBase collisionTile = null;
+
+        if(playerWeapon.isFiring()){
+            int differenceX = 0;
+            int differenceY = 0;
+            int newX = playerWeapon.getX();
+            int newY = playerWeapon.getY();
+
+            if(playerWeapon.getDirection() == DIRECTION_UP){
+                differenceY = getPixelValueForDensity(WeaponObject.SPEED);
+                newY = (playerWeapon.getY() - differenceY);
+            }
+            else if(playerWeapon.getDirection() == DIRECTION_DOWN){
+                differenceY = getPixelValueForDensity(-WeaponObject.SPEED);
+                newY = (playerWeapon.getY() - differenceY);
+            }
+            else if(playerWeapon.getDirection() == DIRECTION_LEFT){
+                differenceX = getPixelValueForDensity(-WeaponObject.SPEED);
+                newX = (playerWeapon.getX() + differenceX);
+            }
+            else if(playerWeapon.getDirection() == DIRECTION_RIGHT){
+                differenceX = getPixelValueForDensity(WeaponObject.SPEED);
+                newX = (playerWeapon.getX() + differenceX);
+            }
+
+            collisionTile = getCollision(newX, newY, playerWeapon.getWidth(), playerWeapon.getHeight());
+
+            Iterator<EnemyObject> iter = mEnemyList.iterator();
+
+            while (iter.hasNext()) {
+                EnemyObject enemy = iter.next();
+
+                if (playerWeapon.getRect().intersect(enemy.getRect())) {
+                    iter.remove();
+                    playerWeapon.setFiring(false);
+                }
+            }
+
+
+			for (EnemyObject enemy : mEnemyList) {
+				if (playerWeapon.getRect().intersect(enemy.getRect())) {
+					mEnemyList.remove(enemy);
+					playerWeapon.setFiring(false);
+					Log.d("enemyhit", "" + enemy.getId());
+				}
+			}
+
+            if ((collisionTile != null) && collisionTile.isBlockerTile()) {
+                handleTileCollision(collisionTile);
+                playerWeapon.setFiring(false);
+            } else {
+                playerWeapon.setX(newX);
+                playerWeapon.setY(newY);
+            }
         }
     }
 
@@ -451,6 +549,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mPlayerUnit.setY(playerStartY);
         mPlayerUnit.setUnmodifiedX(0);
         mPlayerUnit.setUnmodifiedY(0);
+
+
+        playerWeapon = new WeaponObject(mGameContext, R.drawable.wok);
+
+        playerLives = new ArrayList<PlayerLife>();
+        for(int x = 1; x < mPlayerUnit.getNumOfLives()+1; x++){
+            PlayerLife playerLife = new PlayerLife(mGameContext, R.drawable.heart);
+            playerLife.setX(mScreenXMax - (playerLife.getWidth()*x));
+            playerLives.add(playerLife);
+        }
     }
 
     private void setEnemyStart() {
@@ -630,6 +738,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         if (mGameState == STATE_RUNNING) {
                             updatePlayerUnit();
                             updateEnemyUnit();
+                            updatePlayerWeapon();
                         }
 
                         doDraw(c);
@@ -686,6 +795,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 }
 
                 //drawControls(canvas);
+                drawPlayerLives(canvas);
 
                 canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
             }
