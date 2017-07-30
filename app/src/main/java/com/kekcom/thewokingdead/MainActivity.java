@@ -40,20 +40,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, GameActivity.class);
-                mediaPlayer.pause();
-                mediaPlayer.release();
                 startActivity(i);
             }
         });
     }
-    /*
+
     @Override
     protected void onPause(){
         if(mediaPlayer != null || mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
+            mediaPlayer.stop();
             mediaPlayer.release();
         }
         super.onPause();
     }
-    */
+
 }
