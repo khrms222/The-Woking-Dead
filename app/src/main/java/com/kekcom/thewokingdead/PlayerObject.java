@@ -124,12 +124,13 @@ public class PlayerObject extends GameObject{
     public int getFrameWidth() {
 
         return frameWidth;
-
-    public void setNumOfLives(int numOfLives){
-        this.numOfLives = numOfLives;
     }
 
     public int getNumOfLives(){
         return numOfLives;
+    }
+
+    public void setNumOfLives(int numOfLives) {
+        this.numOfLives = numOfLives;
     }
 }
