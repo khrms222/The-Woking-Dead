@@ -7,7 +7,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 public class PlayerObject extends GameObject{
-    public static final int SPEED = 6;
+    public static final int SPEED = 3;
 
     Context mContext;
     long fps;
