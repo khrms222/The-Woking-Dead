@@ -25,7 +25,7 @@ public class Start extends Activity{
     @Override
     protected void onPause(){
         super.onPause();
-        mainView.getThread().setState(MainView.GAME_PAUSED);
+        mainView.getThread().setState(MainView.STATE_PAUSED);
     }
 
     @Override
