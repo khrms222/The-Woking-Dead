@@ -532,7 +532,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mGameLevelData = new GameLevelData(context);
         mGameStageData = new GameStageData(context);
 
-        mFloorBaseTemplates = mGameLevelData.getGameLevelData();
+        mFloorBaseTemplates = mGameLevelData.getLevelData();
 
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
@@ -546,11 +546,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mUiTextPaint.setColor(Color.YELLOW);
         mUiTextPaint.setAntiAlias(true);
 
+        /*
         Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
         if (uiTypeface != null)
         {
             mUiTextPaint.setTypeface(uiTypeface);
         }
+        */
         mUiTextPaint.setTextSize(mGameContext.getApplicationContext().getResources().getDimensionPixelSize(R.dimen.ui_text_size));
 
         startLevel();
@@ -769,7 +771,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     {
         updatingFloorBase = true;
 
-        ArrayList<String> gameLevelData = mGameStageData.getStageData(mPlayerStage, mPlayerLevel);
+        ArrayList<String> gameLevelData = mGameStageData.getGameStageData(mPlayerStage, mPlayerLevel);
 
         String levelTileData = gameLevelData.get(GameStageData.FIELD_ID_TILE_DATA);
 
