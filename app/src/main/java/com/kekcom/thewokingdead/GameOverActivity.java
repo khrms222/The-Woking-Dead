@@ -1,6 +1,7 @@
 package com.kekcom.thewokingdead;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -34,6 +35,11 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
         backButton = (Button) findViewById(R.id.backButton);
         playAgainButton = (Button) findViewById(R.id.playAgainButton);
         gameOverText = (TextView) findViewById(R.id.gameOverText);
+
+        Typeface uiTypeface = Typeface.createFromAsset(getAssets(), "fonts/CHINESETAKEAWAY.ttf");
+        backButton.setTypeface(uiTypeface);
+        playAgainButton.setTypeface(uiTypeface);
+        gameOverText.setTypeface(uiTypeface);
 
         Intent i = getIntent();
 

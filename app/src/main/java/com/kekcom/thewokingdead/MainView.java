@@ -133,7 +133,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mUiTextPaint.setColor(Color.YELLOW);
         mUiTextPaint.setAntiAlias(true);
 
-        Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
+        //Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
+        Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/CHINESETAKEAWAY.ttf");
         if (uiTypeface != null) {
             mUiTextPaint.setTypeface(uiTypeface);
         }
@@ -848,7 +849,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 drawPlayerLives(canvas);
 
                 mUiTextPaint.setColor(Color.argb(255, 255, 0, 0));
-                canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
+                mUiTextPaint.setTextSize(150);
+                canvas.drawText(mLastStatusMessage, mScreenXMax/2 - mScreenXMax/4, mScreenYMax/3, mUiTextPaint);
 
                 drawFireButton(canvas);
             }
