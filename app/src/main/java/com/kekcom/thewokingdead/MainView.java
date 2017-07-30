@@ -23,9 +23,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-/**
- * Created by Marcus on 7/29/2017.
- */
+import com.kekcom.thewokingdead.data.GameLevelData;
+import com.kekcom.thewokingdead.data.GameStageData;
 
 public class MainView extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -533,7 +532,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mGameLevelData = new GameLevelData(context);
         mGameStageData = new GameStageData(context);
 
-        mFlooreBaseTemplates = mGameLevelData.getGameLevelData();
+        mFloorBaseTemplates = mGameLevelData.getGameLevelData();
 
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
