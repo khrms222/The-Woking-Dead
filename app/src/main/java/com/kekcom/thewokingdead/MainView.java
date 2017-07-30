@@ -602,7 +602,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
         if (mEnemyList.size() == 0) {
             for (int x = 0; x < mNumOfEnemies; x++) {
-                EnemyObject enemy = new EnemyObject(mGameContext, R.drawable.z_animations, mScreenDensity);
+                EnemyObject enemy = new EnemyObject(mGameContext, R.drawable.z_animations_chinese, mScreenDensity);
                 enemy.setX(getPixelValueForDensity(100));
                 enemy.setY(getPixelValueForDensity(150));
 
