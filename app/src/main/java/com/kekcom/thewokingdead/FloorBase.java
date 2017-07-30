@@ -37,9 +37,9 @@ public class FloorBase extends GameBaseObject {
 
     public boolean getCollision(float x, float y, int width, int height) {
         if (this.mCollisionRect == null) {
-            this.mCollisionRect = new Rect((int) x, (int) y, ((int) x + width), ((int) y + height));
+            this.mCollisionRect = new Rect((int) x, (int) y, ((int) x + width - 15), ((int) y + height - 45));
         } else {
-            this.mCollisionRect.set((int) x, (int) y, ((int) x + width), ((int) y + height));
+            this.mCollisionRect.set((int) x, (int) y, ((int) x + width - 15), ((int) y + height - 45));
         }
 
         return (this.mCollisionRect.intersects(this.mX, this.mY, (this.mX + getWidth()), (this.mY + getHeight())));

@@ -8,8 +8,9 @@ import java.util.ArrayList;
 
 import static android.provider.BaseColumns._ID;
 
+
 public class GameStageData extends GameDAO {
-    public static final String TABLE_NAME = "gameStageData";
+    public static final String TABLE_NAME = "gameLevelTileData";
 
     public static final String STAGE = "stage";
     public static final String LEVEL = "level";
@@ -21,9 +22,9 @@ public class GameStageData extends GameDAO {
     public static final int FIELD_ID_TILE_DATA = 5;
     public static final String TILE_DATA_LINE_BREAK = "//";
     public static int FIELD_ID_STAGE = 1;
-    public static int FIELD_ID_LEVEL = 2;
-    public static int FIELD_ID_PLAYER_START_TILE_X = 1;
-    public static int FIELD_ID_PLAYER_START_TILE_Y = 1;
+    public static int FIELD_ID_LEVEL = 1;
+    public static int FIELD_ID_PLAYER_START_TILE_X = 3;
+    public static int FIELD_ID_PLAYER_START_TILE_Y = 3;
     private static int size = 5 + (2 * FIELD_ID_LEVEL);
 
     public GameStageData(Context ctx) {
@@ -42,14 +43,14 @@ public class GameStageData extends GameDAO {
                     gw[i][j] = "00";
             }
         }
-        Boolean startingPos = true;
-        while (startingPos) {
+        Boolean check = true;
+        while (check) {
             int x = (int) (Math.random() * size);
             int y = (int) (Math.random() * size);
             if (gw[x][y] == "00") {
                 FIELD_ID_PLAYER_START_TILE_X = x;
                 FIELD_ID_PLAYER_START_TILE_Y = y;
-                startingPos = false;
+                check = false;
             }
         }
         return gw;
@@ -57,9 +58,9 @@ public class GameStageData extends GameDAO {
 
     public static ArrayList<String> parse() {
         String[][] gw = RNGenie();
-        ArrayList<String> parsing = new ArrayList<>(size);
+        ArrayList<String> yoooo = new ArrayList<>(size);
         String command = "INSERT INTO " + GameStageData.TABLE_NAME + " VALUES "
-                + "(null,1,1,1,1,\"";
+                + "(null," + FIELD_ID_STAGE + "," + FIELD_ID_LEVEL + "," + FIELD_ID_PLAYER_START_TILE_X + "," + FIELD_ID_PLAYER_START_TILE_Y + ",\"";
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (j == size - 1)
@@ -70,8 +71,8 @@ public class GameStageData extends GameDAO {
             command += GameStageData.TILE_DATA_LINE_BREAK;
         }
         command += "\");";
-        parsing.add(command);
-        return parsing;
+        yoooo.add(command);
+        return yoooo;
     }
 
     public ArrayList<String> getGameStageData(int stage, int level) {
@@ -82,21 +83,21 @@ public class GameStageData extends GameDAO {
 
         Cursor cursor = db.query(TABLE_NAME, from, where, null, null, null, null);
 
-        ArrayList<String> stageData = new ArrayList<String>();
+        ArrayList<String> levelData = new ArrayList<String>();
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                stageData.add(cursor.getString(FIELD_ID_ID));
-                stageData.add(cursor.getString(FIELD_ID_STAGE));
-                stageData.add(cursor.getString(FIELD_ID_LEVEL));
-                stageData.add(cursor.getString(FIELD_ID_PLAYER_START_TILE_X));
-                stageData.add(cursor.getString(FIELD_ID_PLAYER_START_TILE_Y));
-                stageData.add(cursor.getString(FIELD_ID_TILE_DATA));
+                levelData.add(cursor.getString(FIELD_ID_ID));
+                levelData.add(cursor.getString(FIELD_ID_STAGE));
+                levelData.add(cursor.getString(FIELD_ID_LEVEL));
+                levelData.add(cursor.getString(FIELD_ID_PLAYER_START_TILE_X));
+                levelData.add(cursor.getString(FIELD_ID_PLAYER_START_TILE_Y));
+                levelData.add(cursor.getString(FIELD_ID_TILE_DATA));
             }
             cursor.close();
         }
 
         db.close();
-        return stageData;
+        return levelData;
     }
 }

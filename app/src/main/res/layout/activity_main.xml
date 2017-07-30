@@ -16,14 +16,11 @@
         android:text="Hello World!" />
 
     <Button
-        android:text="Start"
         android:id="@+id/buttonMain"
-
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
-
+        android:layout_centerVertical="true"
+        android:text="Play" />
 
 </RelativeLayout>

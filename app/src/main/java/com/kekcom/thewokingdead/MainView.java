@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Handler;
@@ -51,15 +50,15 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private float mScreenDensity;
 
     private Context mGameContext;
-    private Start mGameActivity;
+    private GameActivity mGameActivity;
     private SurfaceHolder mGameSurfaceHolder = null;
 
-    private boolean updatingFloorBase = false;
+    private boolean updatingGameTiles = false;
 
-    private GameLevelData mGameLevelData = null;
-    private GameStageData mGameStageData = null;
+    private GameLevelData mGameTileData = null;
+    private GameStageData mGameLevelTileData = null;
 
-    private PlayerObject mPlayerObject = null;
+    private PlayerObject mPlayerUnit = null;
 
     private int mPlayerStage = START_STAGE;
     private int mPlayerLevel = START_LEVEL;
@@ -76,10 +75,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private int mPlayerDirection = 0;
 
-    private MainUI mCtrlUpArrow = null;
-    private MainUI mCtrlDownArrow = null;
-    private MainUI mCtrlLeftArrow = null;
-    private MainUI mCtrlRightArrow = null;
+    private MainUi mCtrlUpArrow = null;
+    private MainUi mCtrlDownArrow = null;
+    private MainUi mCtrlLeftArrow = null;
+    private MainUi mCtrlRightArrow = null;
 
     private Paint mUiTextPaint = null;
     private String mLastStatusMessage = "";
@@ -87,26 +86,19 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private int mNumOfEnemies;
     private List<EnemyObject> mEnemyList = new ArrayList<EnemyObject>();
     private EnemyMoveTimer mEnemyMoveTimer;
+    private HashMap<Integer, ArrayList<Integer>> mGameTileTemplates = null;
 
-    private HashMap<Integer, ArrayList<Integer>> mFloorBaseTemplates = null;
-
-    private HashMap<Integer, Bitmap> mFloorBaseBitmaps = new HashMap<Integer, Bitmap>();
-
-    private List<FloorBase> mFloorBase = new ArrayList<FloorBase>();
+    private HashMap<Integer, Bitmap> mGameTileBitmaps = new HashMap<Integer, Bitmap>();
+    private List<FloorBase> mGameTiles = new ArrayList<FloorBase>();
 
     private int mPlayerStartTileX = 0;
     private int mPlayerStartTileY = 0;
 
     private int mTileWidth = 0;
     private int mTileHeight = 0;
-
-    private WeaponObject playerWeapon;
-
-    private List<PlayerLife> playerLives;
     private GameThread thread;
 
-    public MainView(Context context, Start activity, int stage, int level, float screenDensity)
-    {
+    public MainView(Context context, GameActivity activity, int stage, int level, float screenDensity) {
         super(context);
 
         mGameContext = context;
@@ -117,14 +109,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mPlayerStage = stage;
         mPlayerLevel = level;
 
-        mGameLevelData = new GameLevelData(context);
-        mGameStageData = new GameStageData(context);
+        mGameTileData = new GameLevelData(context);
+        mGameLevelTileData = new GameStageData(context);
 
-        mFloorBaseTemplates = mGameLevelData.getLevelData();
+        mGameTileTemplates = mGameTileData.getLevelData();
 
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
-
         thread = new GameThread(holder, context, null);
 
         setFocusable(true);
@@ -134,99 +125,101 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mUiTextPaint.setColor(Color.YELLOW);
         mUiTextPaint.setAntiAlias(true);
 
-
         Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
         if (uiTypeface != null) {
             mUiTextPaint.setTypeface(uiTypeface);
         }
-
         mUiTextPaint.setTextSize(mGameContext.getApplicationContext().getResources().getDimensionPixelSize(R.dimen.ui_text_size));
 
         startLevel();
         thread.doStart();
     }
+    private void drawGameTiles(Canvas canvas) {
+        int gameTilesSize = mGameTiles.size();
+        //boolean playerPerception = mPlayerUnit.getX() + mPlayerUnit.getWidth() > mGameTiles.get(gameTilesSize-1).getX() - mScreenXOffset || mPlayerUnit.getY() + mPlayerUnit.getHeight() > mGameTiles.get(gameTilesSize-1).getY() - mScreenYOffset;
+        if (mPlayerUnit != null)
+            //canvas.drawBitmap(mPlayerUnit.getBitmap(), mPlayerUnit.getX(), mPlayerUnit.getY(), null);
 
-    private void drawFloorBase(Canvas canvas)
-    {
-        int floorBaseSize = mFloorBase.size();
-        for (int i = 0; i < floorBaseSize; i++)
-        {
-            if (mFloorBase.get(i) != null)
-            {
-                mFloorBase.get(i).setX(
-                        mFloorBase.get(i).getX() - mScreenXOffset);
-                mFloorBase.get(i).setY(
-                        mFloorBase.get(i).getY() - mScreenYOffset);
+            mPlayerUnit.setWhereToDraw();
+        mPlayerUnit.getCurrentFrame(mPlayerMoving, mPlayerDirection);
+        canvas.drawBitmap(mPlayerUnit.getBitmap(), mPlayerUnit.getFrameToDraw(), mPlayerUnit.getWhereToDraw(), mUiTextPaint);
 
-                if (mFloorBase.get(i).isVisible())
-                {
-                    canvas.drawBitmap(mFloorBase.get(i).getBitmap(),
-                            mFloorBase.get(i).getX(), mFloorBase.get(i)
+        if (mEnemyList.size() > 0) {
+            for (EnemyObject enemy : mEnemyList) {
+                enemy.setX(enemy.getX() - mScreenXOffset);
+                enemy.setY(enemy.getY() - mScreenYOffset);
+
+                enemy.setWhereToDraw();
+                enemy.getCurrentFrame(enemy.isMoving(), enemy.getDirection());
+                canvas.drawBitmap(enemy.getBitmap(), enemy.getFrameToDraw(), enemy.getWhereToDraw(), mUiTextPaint);
+            }
+        }
+
+        for (int i = 0; i < gameTilesSize; i++) {
+            if (mGameTiles.get(i) != null) {
+                mGameTiles.get(i).setX(
+                        mGameTiles.get(i).getX() - mScreenXOffset);
+                mGameTiles.get(i).setY(
+                        mGameTiles.get(i).getY() - mScreenYOffset);
+                if (mGameTiles.get(i).isVisible()) {
+                    canvas.drawBitmap(mGameTiles.get(i).getBitmap(),
+                            mGameTiles.get(i).getX(), mGameTiles.get(i)
                                     .getY(), null);
                 }
             }
         }
     }
 
-    private void drawControls(Canvas canvas)
-    {
+    private void drawControls(Canvas canvas) {
         canvas.drawBitmap(mCtrlUpArrow.getBitmap(), mCtrlUpArrow.getX(), mCtrlUpArrow.getY(), null);
         canvas.drawBitmap(mCtrlDownArrow.getBitmap(), mCtrlDownArrow.getX(), mCtrlDownArrow.getY(), null);
         canvas.drawBitmap(mCtrlLeftArrow.getBitmap(), mCtrlLeftArrow.getX(), mCtrlLeftArrow.getY(), null);
         canvas.drawBitmap(mCtrlRightArrow.getBitmap(), mCtrlRightArrow.getX(), mCtrlRightArrow.getY(), null);
     }
 
-    private void drawPlayerLives(Canvas canvas){
-        for(PlayerLife playerLife : playerLives){
-            canvas.drawBitmap(playerLife.getBitmap(), playerLife.getX(), playerLife.getY(), null);
-        }
-    }
-
-    private void updatePlayerObject()
-    {
+    private void updatePlayerUnit() {
         FloorBase collisionTile = null;
 
-        if (mPlayerMoving)
-        {
+        if (mPlayerMoving) {
             int differenceX = 0;
             int differenceY = 0;
-            int newX = mPlayerObject.getX();
-            int newY = mPlayerObject.getY();
+            int newX = mPlayerUnit.getX();
+            int newY = mPlayerUnit.getY();
 
-            if (mPlayerHorizontalDirection != 0)
-            {
+            if (mPlayerHorizontalDirection != 0) {
                 differenceX = (mPlayerHorizontalDirection == DIRECTION_RIGHT) ? getPixelValueForDensity(PlayerObject.SPEED) : getPixelValueForDensity(-PlayerObject.SPEED);
-                newX = (mPlayerObject.getX() + differenceX);
+                newX = (mPlayerUnit.getX() + differenceX);
+                //newX = (int)(mPlayerUnit.getX() + (differenceX / mPlayerUnit.getFps()));
             }
 
-            if (mPlayerVerticalDirection != 0)
-            {
+            if (mPlayerVerticalDirection != 0) {
                 differenceY = (mPlayerVerticalDirection == DIRECTION_DOWN) ? getPixelValueForDensity(PlayerObject.SPEED) : getPixelValueForDensity(-PlayerObject.SPEED);
-                newY = (mPlayerObject.getY() + differenceY);
+                newY = (mPlayerUnit.getY() + differenceY);
+                //newY = (int)(mPlayerUnit.getY() + (differenceY / mPlayerUnit.getFps()));
             }
 
-            collisionTile = getCollisionTile(newX, newY, mPlayerObject.getWidth(), mPlayerObject .getHeight());
+            collisionTile = getCollision(newX, newY, mPlayerUnit.getWidth(), mPlayerUnit.getHeight());
 
             if ((collisionTile != null)
-                    && collisionTile.isBlockerTile())
-            {
+                    && collisionTile.isBlockerTile()) {
                 handleTileCollision(collisionTile);
-            } else
-            {
-                mPlayerObject.setX(newX);
-                mPlayerObject.setY(newY);
+            } else {
+                mPlayerUnit.setX(newX);
+                mPlayerUnit.setY(newY);
             }
         }
     }
+    
+    private void updateEnemyUnit() {
 
-    private void updateEnemyObject(){
+        for (EnemyObject enemy : mEnemyList) {
 
-        for(EnemyObject enemy : mEnemyList){
-
-            if(mEnemyMoveTimer.getTimeToMove()){
+            if (mEnemyMoveTimer.getTimeToMove()) {
+                //enemy.setDirection(new Random().nextInt(4) + 1);
                 enemy.setIsMoving(true);
+                //enemy.setCaptureTime(System.currentTimeMillis());
 
-                if(enemy.timeToChangeDirection()){
+                if (enemy.timeToChangeDirection()) {
                     enemy.setDirection(new Random().nextInt(4) + 1);
                     enemy.setTimeToChangeDirection(false);
 
@@ -234,7 +227,11 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                 FloorBase collisionTile = null;
 
-                if(enemy.timeToMove()) {
+                if (enemy.timeToMove()) {
+                    //int direction = new Random().nextInt(4) + 1;
+                    //int direction = 2;
+                    //enemy.setDirection(direction);
+
                     int differenceX = 0;
                     int differenceY = 0;
                     int newX = enemy.getX();
@@ -254,21 +251,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         newX = (enemy.getX() + differenceX);
                     }
 
-                    collisionTile = getCollisionTile(newX, newY, enemy.getWidth(), enemy.getHeight());
-
-
-                    Iterator<PlayerLife> iter = playerLives.iterator();
-                    while (iter.hasNext()) {
-                        iter.next();
-                        if (enemy.getRect().intersect(mPlayerObject.getRect()) && enemy.timeToAttack()) {
-                            enemy.setLastTimeAttacked(System.currentTimeMillis());
-                            iter.remove();
-                        }
-                    }
-
-                    if(playerLives.size() == 0){
-                        mGameRun = false;
-                    }
+                    collisionTile = getCollision(newX, newY, enemy.getWidth(), enemy.getHeight());
 
                     if ((collisionTile != null) && collisionTile.isBlockerTile()) {
                         handleTileCollision(collisionTile);
@@ -278,8 +261,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         enemy.setY(newY);
                     }
                 }
-            }
-            else{
+            } else {
                 enemy.setIsMoving(false);
                 enemy.setTimeToChangeDirection(true);
             }
@@ -287,162 +269,97 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
-    public void updatePlayerWeapon(){
+    private FloorBase getCollision(int x, int y, int width, int height) {
+        FloorBase gameTile = null;
 
-        FloorBase collisionTile = null;
-
-        if(playerWeapon.isFiring()){
-            int differenceX = 0;
-            int differenceY = 0;
-            int newX = playerWeapon.getX();
-            int newY = playerWeapon.getY();
-
-            if(playerWeapon.getDirection() == DIRECTION_UP){
-                differenceY = getPixelValueForDensity(WeaponObject.SPEED);
-                newY = (playerWeapon.getY() - differenceY);
-            }
-            else if(playerWeapon.getDirection() == DIRECTION_DOWN){
-                differenceY = getPixelValueForDensity(-WeaponObject.SPEED);
-                newY = (playerWeapon.getY() - differenceY);
-            }
-            else if(playerWeapon.getDirection() == DIRECTION_LEFT){
-                differenceX = getPixelValueForDensity(-WeaponObject.SPEED);
-                newX = (playerWeapon.getX() + differenceX);
-            }
-            else if(playerWeapon.getDirection() == DIRECTION_RIGHT){
-                differenceX = getPixelValueForDensity(WeaponObject.SPEED);
-                newX = (playerWeapon.getX() + differenceX);
-            }
-
-            collisionTile = getCollisionTile(newX, newY, playerWeapon.getWidth(), playerWeapon.getHeight());
-
-            Iterator<EnemyObject> iter = mEnemyList.iterator();
-
-            while (iter.hasNext()) {
-                EnemyObject enemy = iter.next();
-
-                if (playerWeapon.getRect().intersect(enemy.getRect())) {
-                    iter.remove();
-                    playerWeapon.setFiring(false);
-                }
-            }
-
-            if ((collisionTile != null) && collisionTile.isBlockerTile()) {
-                handleTileCollision(collisionTile);
-                playerWeapon.setFiring(false);
-            } else {
-                playerWeapon.setX(newX);
-                playerWeapon.setY(newY);
-            }
-        }
-    }
-
-    private FloorBase getCollisionTile(int x, int y, int width, int height)
-    {
-        FloorBase floorBase = null;
-
-        int floorBaseSize = mFloorBase.size();
-        for (int i = 0; i < floorBaseSize; i++) {
-            floorBase = mFloorBase.get(i);
-            if ((floorBase != null) && floorBase.isCollisionTile()) {
-                if ((floorBase.getX() == x) && (floorBase.getY() == y)) {
+        int gameTilesSize = mGameTiles.size();
+        for (int i = 0; i < gameTilesSize; i++) {
+            gameTile = mGameTiles.get(i);
+            if ((gameTile != null) && gameTile.isCollisionTile()) {
+                // Make sure tiles don't collide with themselves
+                if ((gameTile.getX() == x) && (gameTile.getY() == y)) {
                     continue;
                 }
 
-                if (floorBase.getCollision(x, y, width, height)) {
-                    return floorBase;
+                if (gameTile.getCollision(x, y, width, height)) {
+                    return gameTile;
                 }
             }
         }
         return null;
     }
 
-    private void handleTileCollision(FloorBase floorBase)
-    {
-        if (floorBase != null)
-        {
-            switch (floorBase.getType())
-            {
+    private void handleTileCollision(FloorBase gameTile) {
+        if (gameTile != null) {
+            switch (gameTile.getType()) {
                 case FloorBase.TYPE_DANGEROUS:
+                    //handleDangerousTileCollision();
                     break;
                 case FloorBase.TYPE_EXIT:
+                    //handleExitTileCollision();
                     break;
                 default:
+                    //mLastStatusMessage = "Collision with regular tile";
             }
         }
     }
-
-    private void handleDangerousTileCollision()
-    {
+    private void handleDangerousTileCollision() {
         mLastStatusMessage = "Collision with dangerous tile";
     }
 
-    private void handleExitTileCollision()
-    {
+    private void handleExitTileCollision() {
         mLastStatusMessage = "Collision with exit tile";
     }
 
-    public GameThread getThread()
-    {
+    public GameThread getThread() {
         return thread;
     }
 
+
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height)
-    {
+                               int height) {
         thread.setSurfaceSize(width, height);
     }
 
-    public void surfaceCreated(SurfaceHolder holder)
-    {
-        if (thread.getState() == Thread.State.TERMINATED)
-        {
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        if (thread.getState() == Thread.State.TERMINATED) {
             thread = new GameThread(holder, getContext(), new Handler());
             thread.setRunning(true);
             thread.start();
             thread.doStart();
             startLevel();
-        }
-        else
-        {
+        } else {
             thread.setRunning(true);
             thread.start();
         }
     }
 
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
+    public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
         thread.setRunning(false);
-        while (retry)
-        {
-            try
-            {
+        while (retry) {
+            try {
                 thread.join();
                 retry = false;
-            } catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 Log.e("Tile Game Example", e.getMessage());
             }
         }
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
+    public boolean onTouchEvent(MotionEvent event) {
         int eventAction = event.getAction();
 
-        switch (eventAction)
-        {
+        switch (eventAction) {
             case MotionEvent.ACTION_DOWN:
 
-                if (mGameState == STATE_RUNNING)
-                {
+                if (mGameState == STATE_RUNNING) {
                     final int x = (int) event.getX();
                     final int y = (int) event.getY();
 
-                    if (mCtrlUpArrow.getImpact(x, y))
-                    {
+                    if (y < mScreenYCenter / 2) {
                         Log.d("Tile Game Example", "Pressed up arrow");
                         mLastStatusMessage = "Moving up";
                         mPlayerVerticalDirection = DIRECTION_UP;
@@ -450,10 +367,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         mPlayerDirection = DIRECTION_UP;
 
                         mPlayerMoving = true;
-
-                    }
-                    else if (mCtrlDownArrow.getImpact(x, y))
-                    {
+                    } else if (y > 3 * mScreenYCenter / 2) {
                         Log.d("Tile Game Example", "Pressed down arrow");
                         mLastStatusMessage = "Moving down";
                         mPlayerVerticalDirection = DIRECTION_DOWN;
@@ -461,10 +375,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         mPlayerDirection = DIRECTION_DOWN;
 
                         mPlayerMoving = true;
-
-                    }
-                    else if (mCtrlLeftArrow.getImpact(x, y))
-                    {
+                    } else if ((y > mScreenYMax / 4 && y < 3 * mScreenYMax / 4) && x < mScreenXCenter) {
                         Log.d("Tile Game Example", "Pressed left arrow");
                         mLastStatusMessage = "Moving left";
                         mPlayerHorizontalDirection = DIRECTION_LEFT;
@@ -472,10 +383,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         mPlayerDirection = DIRECTION_LEFT;
 
                         mPlayerMoving = true;
-
-                    }
-                    else if (mCtrlRightArrow.getImpact(x, y))
-                    {
+                    } else if ((y > mScreenYMax / 4 && y < 3 * mScreenYMax / 4) && x > mScreenXCenter) {
                         Log.d("Tile Game Example", "Pressed right arrow");
                         mLastStatusMessage = "Moving right";
                         mPlayerHorizontalDirection = DIRECTION_RIGHT;
@@ -483,7 +391,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         mPlayerDirection = DIRECTION_RIGHT;
 
                         mPlayerMoving = true;
-
                     }
                 }
 
@@ -499,87 +406,68 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         return true;
     }
 
-    private void setControlsStart()
-    {
-        if (mCtrlDownArrow == null)
-        {
-            mCtrlDownArrow = new MainUI(mGameContext, R.drawable.ctrl_down_arrow);
+    private void setControlsStart() {
+        if (mCtrlDownArrow == null) {
+            mCtrlDownArrow = new MainUi(mGameContext, R.drawable.ctrl_down_arrow);
 
             mCtrlDownArrow.setX(mScreenXMax - ((mCtrlDownArrow.getWidth() * 2) + getPixelValueForDensity(CONTROLS_PADDING)));
             mCtrlDownArrow.setY(mScreenYMax - (mCtrlDownArrow.getHeight() + getPixelValueForDensity(CONTROLS_PADDING)));
         }
 
-        if (mCtrlUpArrow == null)
-        {
-            mCtrlUpArrow = new MainUI(mGameContext, R.drawable.ctrl_up_arrow);
-
+        if (mCtrlUpArrow == null) {
+            mCtrlUpArrow = new MainUi(mGameContext, R.drawable.ctrl_up_arrow);
             mCtrlUpArrow.setX(mCtrlDownArrow.getX());
             mCtrlUpArrow.setY(mCtrlDownArrow.getY() - (mCtrlUpArrow.getHeight() * 2));
         }
 
-        if (mCtrlLeftArrow == null)
-        {
-            mCtrlLeftArrow = new MainUI(mGameContext, R.drawable.ctrl_left_arrow);
+        if (mCtrlLeftArrow == null) {
+            mCtrlLeftArrow = new MainUi(mGameContext, R.drawable.ctrl_left_arrow);
             mCtrlLeftArrow.setX(mCtrlDownArrow.getX() - mCtrlLeftArrow.getWidth());
             mCtrlLeftArrow.setY(mCtrlDownArrow.getY() - mCtrlLeftArrow.getHeight());
         }
 
-        if (mCtrlRightArrow == null)
-        {
-            mCtrlRightArrow = new MainUI(mGameContext, R.drawable.ctrl_right_arrow);
+        if (mCtrlRightArrow == null) {
+            mCtrlRightArrow = new MainUi(mGameContext, R.drawable.ctrl_right_arrow);
 
             mCtrlRightArrow.setX(mScreenXMax - (mCtrlLeftArrow.getWidth() + getPixelValueForDensity(CONTROLS_PADDING)));
             mCtrlRightArrow.setY(mCtrlLeftArrow.getY());
         }
     }
 
-    private void setPlayerStart()
-    {
-        if (mPlayerObject == null)
-        {
-            mPlayerObject = new PlayerObject(mGameContext, R.drawable.walk_left_right_up_down);
+    private void setPlayerStart() {
+        if (mPlayerUnit == null) {
+            mPlayerUnit = new PlayerObject(mGameContext, R.drawable.walk_left_right_up_down);
         }
 
-        int playerStartX = (mPlayerStartTileX * mPlayerObject.getWidth());
-        int playerStartY = (mPlayerStartTileY * mPlayerObject.getHeight());
+        int playerStartX = (mPlayerStartTileX * 100);
+        int playerStartY = (mPlayerStartTileY * 100);
 
-        Log.d("logging", "X: " + mPlayerObject.getWidth() + " Y: " + mPlayerObject.getHeight());
+        Log.d("logging", "X: " + mPlayerUnit.getWidth() + " Y: " + mPlayerUnit.getHeight());
+        //playerStartX = 819;
+        //playerStartY = 351;
 
         Log.d("Tile Game Example", "Player unit starting at X: " + playerStartX + ", Y: " + playerStartY);
 
-        mPlayerObject.setX(playerStartX);
-        mPlayerObject.setY(playerStartY);
-        mPlayerObject.setUnmodifiedX(0);
-        mPlayerObject.setUnmodifiedY(0);
-
-        playerWeapon = new WeaponObject(mGameContext, R.drawable.wok);
-
-
-
-
-        playerLives = new ArrayList<PlayerLife>();
-        for(int x = 1; x < mPlayerObject.getNumOfLives()+1; x++){
-            PlayerLife playerLife = new PlayerLife(mGameContext, R.drawable.heart);
-            playerLife.setX(mScreenXMax - (playerLife.getWidth()*x));
-            playerLives.add(playerLife);
-        }
+        mPlayerUnit.setX(playerStartX);
+        mPlayerUnit.setY(playerStartY);
+        mPlayerUnit.setUnmodifiedX(0);
+        mPlayerUnit.setUnmodifiedY(0);
     }
 
-    private void setEnemyStart(){
+    private void setEnemyStart() {
 
-        mNumOfEnemies = 4;
+        mNumOfEnemies = 2;
 
         mEnemyMoveTimer = new EnemyMoveTimer(5000, 10000);
 
-        if(mEnemyList.size() == 0){
-            for(int x = 0; x < mNumOfEnemies; x ++) {
+        if (mEnemyList.size() == 0) {
+            for (int x = 0; x < mNumOfEnemies; x++) {
                 EnemyObject enemy = new EnemyObject(mGameContext, R.drawable.z_animations, mScreenDensity);
-                enemy.setX(770);
-                enemy.setY(330);
+                enemy.setX(500);
+                enemy.setY(500);
 
                 enemy.setIsMoving(true);
                 enemy.setDirection(new Random().nextInt(4) + 1);
-                enemy.setLastTimeAttacked(System.currentTimeMillis());
 
                 mEnemyList.add(enemy);
             }
@@ -588,23 +476,21 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mEnemyMoveTimer.start();
     }
 
-    private void parseGameLevelData()
-    {
-        updatingFloorBase = true;
+    private void parseGameLevelData() {
+        updatingGameTiles = true;
 
-        ArrayList<String> gameLevelData = mGameStageData.getGameStageData(mPlayerStage, mPlayerLevel);
+        ArrayList<String> gameLevelData = mGameLevelTileData.getGameStageData(mPlayerStage, mPlayerLevel);
 
         String levelTileData = gameLevelData.get(GameStageData.FIELD_ID_TILE_DATA);
 
-        if (levelTileData == null)
-        {
+        if (levelTileData == null) {
             return;
         }
 
         mPlayerStartTileX = Integer.parseInt(gameLevelData.get(GameStageData.FIELD_ID_PLAYER_START_TILE_X));
         mPlayerStartTileY = Integer.parseInt(gameLevelData.get(GameStageData.FIELD_ID_PLAYER_START_TILE_Y));
 
-        mFloorBase.clear();
+        mGameTiles.clear();
 
         String[] tileLines = levelTileData.split(GameStageData.TILE_DATA_LINE_BREAK);
 
@@ -621,35 +507,34 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             String[] tiles = tileLine.split(",");
 
             for (String tile : tiles) {
-                ArrayList<Integer> tileData = mFloorBaseTemplates.get(Integer.parseInt(tile));
+                ArrayList<Integer> tileData = mGameTileTemplates.get(Integer.parseInt(tile));
 
                 if ((tileData != null)
                         && (tileData.size() > 0)
                         && (tileData.get(GameLevelData.FIELD_ID_DRAWABLE) > 0)) {
                     tilePoint.x = tileX;
                     tilePoint.y = tileY;
+                    FloorBase gameTile = new FloorBase(mGameContext, tilePoint);
 
-                    FloorBase floorBase = new FloorBase(mGameContext, tilePoint);
+                    bitmap = setAndGetGameTileBitmap(tileData.get(GameLevelData.FIELD_ID_DRAWABLE));
+                    gameTile.setBitmap(bitmap);
 
-                    bitmap = setAndGetFloorBaseBitmap(tileData.get(GameLevelData.FIELD_ID_DRAWABLE));
-                    floorBase.setBitmap(bitmap);
-
-                    floorBase.setType(tileData.get(GameLevelData.FIELD_ID_TYPE));
+                    gameTile.setType(tileData.get(GameLevelData.FIELD_ID_TYPE));
 
                     if (tileData.get(GameLevelData.FIELD_ID_VISIBLE) == 0) {
-                        floorBase.setVisible(false);
+                        gameTile.setVisible(false);
                     }
 
-                    floorBase.setKey(tileKey);
+                    gameTile.setKey(tileKey);
 
                     if (mTileWidth == 0) {
-                        mTileWidth = floorBase.getWidth();
+                        mTileWidth = gameTile.getWidth();
                     }
                     if (mTileHeight == 0) {
-                        mTileHeight = floorBase.getHeight();
+                        mTileHeight = gameTile.getHeight();
                     }
 
-                    mFloorBase.add(floorBase);
+                    mGameTiles.add(gameTile);
 
                     tileKey++;
                 }
@@ -660,18 +545,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             tileY += mTileHeight;
         }
 
-        updatingFloorBase = false;
+        updatingGameTiles = false;
     }
 
-    private void setGameStartState()
-    {
-        setControlsStart();
+    private void setGameStartState() {
+        //setControlsStart();
         setPlayerStart();
         setEnemyStart();
     }
 
-    private void startLevel()
-    {
+    private void startLevel() {
         parseGameLevelData();
         setPlayerStart();
         setEnemyStart();
@@ -679,26 +562,22 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         thread.unpause();
     }
 
-    private Bitmap setAndGetFloorBaseBitmap(int resourceId)
-    {
-        if (!mFloorBaseBitmaps.containsKey(resourceId))
-        {
+    private Bitmap setAndGetGameTileBitmap(int resourceId) {
+        if (!mGameTileBitmaps.containsKey(resourceId)) {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
             Bitmap bitmap = BitmapFactory.decodeResource(mGameContext
                     .getResources(), resourceId);
 
-            if (bitmap != null)
-            {
-                mFloorBaseBitmaps.put(resourceId, bitmap);
+            if (bitmap != null) {
+                mGameTileBitmaps.put(resourceId, bitmap);
             }
         }
 
-        return mFloorBaseBitmaps.get(resourceId);
+        return mGameTileBitmaps.get(resourceId);
     }
 
-    private int getPixelValueForDensity(int pixels)
-    {
+    private int getPixelValueForDensity(int pixels) {
         return (int) (pixels * mScreenDensity);
     }
 
@@ -750,16 +629,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         long startTimeFrame = System.currentTimeMillis();
 
                         if (mGameState == STATE_RUNNING) {
-                            updatePlayerObject();
-                            updateEnemyObject();
-                            updatePlayerWeapon();
+                            updatePlayerUnit();
+                            updateEnemyUnit();
                         }
 
                         doDraw(c);
-
-                        mPlayerObject.setTimeThisFrame(System.currentTimeMillis() - startTimeFrame);
-                        if (mPlayerObject.getTimeThisFrame() >= 1) {
-                            mPlayerObject.setFps(1000 / mPlayerObject.getTimeThisFrame());
+                        mPlayerUnit.setTimeThisFrame(System.currentTimeMillis() - startTimeFrame);
+                        if (mPlayerUnit.getTimeThisFrame() >= 1) {
+                            mPlayerUnit.setFps(1000 / mPlayerUnit.getTimeThisFrame());
                         }
                     }
                 } finally {
@@ -789,65 +666,30 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         }
 
         private void centerView() {
-            mPlayerObject.setUnmodifiedX(mPlayerObject.getX() + mScreenXCenter);
-            mPlayerObject.setUnmodifiedY(mPlayerObject.getY() + mScreenYCenter);
+            mPlayerUnit.setUnmodifiedX(mPlayerUnit.getX() + mScreenXCenter);
+            mPlayerUnit.setUnmodifiedY(mPlayerUnit.getY() + mScreenYCenter);
 
-            mScreenXOffset = (mPlayerObject.getX() - mScreenXCenter);
-            mScreenYOffset = (mPlayerObject.getY() - mScreenYCenter);
+            mScreenXOffset = (mPlayerUnit.getX() - mScreenXCenter);
+            mScreenYOffset = (mPlayerUnit.getY() - mScreenYCenter);
 
-            mPlayerObject.setX(mScreenXCenter);
-            mPlayerObject.setY(mScreenYCenter);
+            mPlayerUnit.setX(mScreenXCenter);
+            mPlayerUnit.setY(mScreenYCenter);
         }
 
         private void doDraw(Canvas canvas) {
             centerView();
 
-            if (canvas != null && mGameRun) {
+            if (canvas != null) {
                 canvas.drawBitmap(mBackgroundImage, 0, 0, null);
 
-                if (!updatingFloorBase) {
-                    drawFloorBase(canvas);
+                if (!updatingGameTiles) {
+                    drawGameTiles(canvas);
                 }
 
-                if (mPlayerObject != null)
+                //drawControls(canvas);
 
-                    mPlayerObject.setWhereToDraw();
-                mPlayerObject.getCurrentFrame(mPlayerMoving, mPlayerDirection);
-                canvas.drawBitmap(mPlayerObject.getBitmap(), mPlayerObject.getFrameToDraw(), mPlayerObject.getWhereToDraw(), mUiTextPaint);
+                canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
             }
-
-            if (mEnemyList.size() > 0) {
-                for (EnemyObject enemy : mEnemyList) {
-                    enemy.setX(enemy.getX() - mScreenXOffset);
-                    enemy.setY(enemy.getY() - mScreenYOffset);
-
-                    enemy.setWhereToDraw();
-                    enemy.getCurrentFrame(enemy.isMoving(), enemy.getDirection());
-                    canvas.drawBitmap(enemy.getBitmap(), enemy.getFrameToDraw(), enemy.getWhereToDraw(), mUiTextPaint);
-                }
-            }
-
-            if (playerWeapon.isFiring()) {
-                playerWeapon.setX(playerWeapon.getX() - mScreenXOffset);
-                playerWeapon.setY(playerWeapon.getY() - mScreenYOffset);
-
-                playerWeapon.setWhereToDraw();
-                playerWeapon.getCurrentFrame(playerWeapon.getDirection());
-                canvas.drawBitmap(playerWeapon.getBitmap(), playerWeapon.getFrameToDraw(), playerWeapon.getWhereToDraw(), mUiTextPaint);
-            }
-
-
-            mUiTextPaint.setColor(Color.argb(255, 0, 0, 0));
-
-            Path path = new Path();
-            path.addCircle(mPlayerObject.getX() + mPlayerObject.getWidth() / 2, mPlayerObject.getY() + mPlayerObject.getHeight() / 2, mPlayerObject.getWidth() * 3, Path.Direction.CW);
-            path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-            canvas.drawPath(path, mUiTextPaint);
-
-            drawControls(canvas);
-            drawPlayerLives(canvas);
-
-            canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
         }
     }
 }
