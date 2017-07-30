@@ -56,6 +56,7 @@ public class GameStageData extends GameDAO {
     public static ArrayList<String> parse() {
         String[][] gw = RNGenie();
         Boolean check = true;
+        /*
         while (check) {
             int x = (int) (Math.random() * size);
             int y = (int) (Math.random() * size);
@@ -65,6 +66,7 @@ public class GameStageData extends GameDAO {
                 check = false;
             }
         }
+        */
         ArrayList<String> yoooo = new ArrayList<>(size);
         String command = "INSERT INTO " + GameStageData.TABLE_NAME + " VALUES "
                 + "(null," + FIELD_ID_STAGE + "," + FIELD_ID_LEVEL + "," + FIELD_ID_PLAYER_START_TILE_X + "," + FIELD_ID_PLAYER_START_TILE_Y + ",\"";

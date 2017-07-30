@@ -442,8 +442,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         int playerStartY = (mPlayerStartTileY * 100);
 
         Log.d("logging", "X: " + mPlayerUnit.getWidth() + " Y: " + mPlayerUnit.getHeight());
-        //playerStartX = 819;
-        //playerStartY = 351;
+        playerStartX = 400;
+        playerStartY = 400;
 
         Log.d("Tile Game Example", "Player unit starting at X: " + playerStartX + ", Y: " + playerStartY);
 
@@ -462,8 +462,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         if (mEnemyList.size() == 0) {
             for (int x = 0; x < mNumOfEnemies; x++) {
                 EnemyObject enemy = new EnemyObject(mGameContext, R.drawable.z_animations, mScreenDensity);
-                enemy.setX(500);
-                enemy.setY(500);
+                enemy.setX(600);
+                enemy.setY(600);
 
                 enemy.setIsMoving(true);
                 enemy.setDirection(new Random().nextInt(4) + 1);
