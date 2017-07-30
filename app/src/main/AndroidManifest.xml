@@ -16,7 +16,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.kekcom.thewokingdead.GameActivity">
-        </activity>
     </application>
 
 </manifest>

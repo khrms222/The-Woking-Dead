@@ -21,10 +21,16 @@ import com.kekcom.thewokingdead.data.GameStageData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class MainView extends SurfaceView implements SurfaceHolder.Callback {
+/**
+ * Created by Marcus on 7/29/2017.
+ */
+
+public class MainView extends SurfaceView implements SurfaceHolder.Callback
+{
     public static final int STATE_RUNNING = 1;
     public static final int STATE_PAUSED = 2;
     private static final int CONTROLS_PADDING = 10;
@@ -128,7 +134,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
         startLevel();
         thread.doStart();
     }
-
     private void drawGameTiles(Canvas canvas) {
         int gameTilesSize = mGameTiles.size();
         //boolean playerPerception = mPlayerUnit.getX() + mPlayerUnit.getWidth() > mGameTiles.get(gameTilesSize-1).getX() - mScreenXOffset || mPlayerUnit.getY() + mPlayerUnit.getHeight() > mGameTiles.get(gameTilesSize-1).getY() - mScreenYOffset;
@@ -284,7 +289,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
         return null;
     }
 
-
     private void handleTileCollision(FloorBase gameTile) {
         if (gameTile != null) {
             switch (gameTile.getType()) {
@@ -299,7 +303,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
-
     private void handleDangerousTileCollision() {
         mLastStatusMessage = "Collision with dangerous tile";
     }
@@ -413,7 +416,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (mCtrlUpArrow == null) {
             mCtrlUpArrow = new MainUi(mGameContext, R.drawable.ctrl_up_arrow);
-
             mCtrlUpArrow.setX(mCtrlDownArrow.getX());
             mCtrlUpArrow.setY(mCtrlDownArrow.getY() - (mCtrlUpArrow.getHeight() * 2));
         }
@@ -512,7 +514,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
                         && (tileData.get(GameLevelData.FIELD_ID_DRAWABLE) > 0)) {
                     tilePoint.x = tileX;
                     tilePoint.y = tileY;
-
                     FloorBase gameTile = new FloorBase(mGameContext, tilePoint);
 
                     bitmap = setAndGetGameTileBitmap(tileData.get(GameLevelData.FIELD_ID_DRAWABLE));
@@ -600,7 +601,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         public void setSurfaceSize(int width, int height) {
-            // synchronized to make sure these all change atomically
             synchronized (mGameSurfaceHolder) {
                 mBackgroundImage = Bitmap.createScaledBitmap(mBackgroundImage,
                         width, height, true);
@@ -634,7 +634,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
                         }
 
                         doDraw(c);
-
                         mPlayerUnit.setTimeThisFrame(System.currentTimeMillis() - startTimeFrame);
                         if (mPlayerUnit.getTimeThisFrame() >= 1) {
                             mPlayerUnit.setFps(1000 / mPlayerUnit.getTimeThisFrame());

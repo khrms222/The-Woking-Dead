@@ -42,6 +42,9 @@ public class EnemyObject extends GameObject{
 
     private boolean timeToChangeDirection;
 
+    private long lastTimeAttacked;
+    private long attackDelay = 5000;
+
 
     public EnemyObject(Context context, int drawable, float mScreenDensity) {
         super(context, drawable);
@@ -147,5 +150,18 @@ public class EnemyObject extends GameObject{
 
     public boolean timeToChangeDirection(){
         return timeToChangeDirection;
+    }
+
+    public void setLastTimeAttacked(long lastTimeAttacked){
+        this.lastTimeAttacked = lastTimeAttacked;
+    }
+
+    public boolean timeToAttack(){
+        if(System.currentTimeMillis() < lastTimeAttacked + attackDelay){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }
