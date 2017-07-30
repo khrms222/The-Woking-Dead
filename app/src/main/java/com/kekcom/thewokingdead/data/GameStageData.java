@@ -23,12 +23,19 @@ public class GameStageData extends GameDAO {
     public static final String TILE_DATA_LINE_BREAK = "//";
     public static int FIELD_ID_STAGE = 1;
     public static int FIELD_ID_LEVEL = 1;
-    public static int FIELD_ID_PLAYER_START_TILE_X = 3;
-    public static int FIELD_ID_PLAYER_START_TILE_Y = 3;
-    private static int size = 5 + (2 * FIELD_ID_LEVEL);
-
+    private static int FIELD_ID_PLAYER_START_TILE_X = 3;
+    private static int FIELD_ID_PLAYER_START_TILE_Y = 3;
+    private static int size = 7 + (2 * FIELD_ID_LEVEL);
     public GameStageData(Context ctx) {
         super(ctx);
+    }
+
+    public static int getFieldIdPlayerStartTileX() {
+        return FIELD_ID_PLAYER_START_TILE_X;
+    }
+
+    public static int getFieldIdPlayerStartTileY() {
+        return FIELD_ID_PLAYER_START_TILE_Y;
     }
 
     private static String[][] RNGenie() {

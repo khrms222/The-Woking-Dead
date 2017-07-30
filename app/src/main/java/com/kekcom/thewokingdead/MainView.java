@@ -21,7 +21,6 @@ import com.kekcom.thewokingdead.data.GameStageData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -487,8 +486,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
 
-        mPlayerStartTileX = Integer.parseInt(gameLevelData.get(GameStageData.FIELD_ID_PLAYER_START_TILE_X));
-        mPlayerStartTileY = Integer.parseInt(gameLevelData.get(GameStageData.FIELD_ID_PLAYER_START_TILE_Y));
+        mPlayerStartTileX = Integer.parseInt(gameLevelData.get(GameStageData.getFieldIdPlayerStartTileX()));
+        mPlayerStartTileY = Integer.parseInt(gameLevelData.get(GameStageData.getFieldIdPlayerStartTileY()));
 
         mGameTiles.clear();
 
