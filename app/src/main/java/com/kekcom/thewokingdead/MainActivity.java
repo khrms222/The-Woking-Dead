@@ -26,11 +26,11 @@ import android.view.Window;
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
-
+    private MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.unem);
+        mediaPlayer = MediaPlayer.create(this, R.raw.unem);
         mediaPlayer.start();
 
         setContentView(R.layout.activity_main);
@@ -46,4 +46,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    /*
+    @Override
+    protected void onPause(){
+        if(mediaPlayer != null || mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            mediaPlayer.release();
+        }
+        super.onPause();
+    }
+    */
 }

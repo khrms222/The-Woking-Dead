@@ -97,8 +97,8 @@ public class GameStageData extends GameDAO {
                 levelData.add(cursor.getString(FIELD_ID_ID));
                 levelData.add(cursor.getString(FIELD_ID_STAGE));
                 levelData.add(cursor.getString(FIELD_ID_LEVEL));
-                levelData.add(cursor.getString(FIELD_ID_PLAYER_START_TILE_X));
-                levelData.add(cursor.getString(FIELD_ID_PLAYER_START_TILE_Y));
+                levelData.add(cursor.getString(getFieldIdPlayerStartTileX()));
+                levelData.add(cursor.getString(getFieldIdPlayerStartTileY()));
                 levelData.add(cursor.getString(FIELD_ID_TILE_DATA));
             }
             cursor.close();
