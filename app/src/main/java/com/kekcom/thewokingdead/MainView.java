@@ -104,6 +104,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private List<PlayerLife> playerLives;
 
+    private MainUi fireButton = null;
+
     public MainView(Context context, GameActivity activity, int stage, int level, float screenDensity) {
         super(context);
 
@@ -181,6 +183,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         canvas.drawBitmap(mCtrlDownArrow.getBitmap(), mCtrlDownArrow.getX(), mCtrlDownArrow.getY(), null);
         canvas.drawBitmap(mCtrlLeftArrow.getBitmap(), mCtrlLeftArrow.getX(), mCtrlLeftArrow.getY(), null);
         canvas.drawBitmap(mCtrlRightArrow.getBitmap(), mCtrlRightArrow.getX(), mCtrlRightArrow.getY(), null);
+    }
+
+    private void drawFireButton(Canvas canvas){
+        canvas.drawBitmap(fireButton.getBitmap(), fireButton.getX(), fireButton.getY(), null);
     }
 
     private void drawPlayerLives(Canvas canvas){
@@ -460,6 +466,19 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                     final int x = (int) event.getX();
                     final int y = (int) event.getY();
 
+                    if(fireButton.getImpact(x, y)){
+                        mLastStatusMessage = "Fire!";
+
+                        if(!playerWeapon.isFiring()) {
+                            playerWeapon.setDirection(mPlayerDirection);
+                            playerWeapon.setFiring(true);
+                            playerWeapon.setX(mPlayerUnit.getX());
+                            playerWeapon.setY(mPlayerUnit.getY());
+
+                            return true;
+                        }
+                    }
+
                     if (y < mScreenYCenter / 2) {
                         Log.d("Tile Game Example", "Pressed up arrow");
                         mLastStatusMessage = "Moving up";
@@ -536,6 +555,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         }
     }
     */
+
+    private void setFireButton(){
+        if(fireButton == null){
+            fireButton = new MainUi(mGameContext, R.drawable.wpbf);
+            fireButton.setX(mScreenXMax - fireButton.getWidth());
+            fireButton.setY(mScreenYMax - fireButton.getHeight());
+        }
+    }
 
     private void setPlayerStart() {
         if (mPlayerUnit == null) {
@@ -665,6 +692,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         //setControlsStart();
         setPlayerStart();
         setEnemyStart();
+        setFireButton();
     }
 
     private void startLevel() {
@@ -802,8 +830,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                 //drawControls(canvas);
 
-                mUiTextPaint.setColor(Color.argb(255, 0, 0, 0));
+                if(playerWeapon.isFiring()){
+                    playerWeapon.setX(playerWeapon.getX() - mScreenXOffset);
+                    playerWeapon.setY(playerWeapon.getY() - mScreenYOffset);
 
+                    playerWeapon.setWhereToDraw();
+                    playerWeapon.getCurrentFrame(playerWeapon.getDirection());
+                    canvas.drawBitmap(playerWeapon.getBitmap(), playerWeapon.getFrameToDraw(), playerWeapon.getWhereToDraw(), mUiTextPaint);
+                }
+
+                mUiTextPaint.setColor(Color.argb(255, 0, 0, 0));
                 Path path = new Path();
                 path.addCircle(mPlayerUnit.getX() + mPlayerUnit.getWidth()/2, mPlayerUnit.getY() + mPlayerUnit.getHeight()/2, mPlayerUnit.getWidth()*3, Path.Direction.CW);
                 path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
@@ -813,6 +849,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                 mUiTextPaint.setColor(Color.argb(255, 255, 0, 0));
                 canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
+
+                drawFireButton(canvas);
             }
         }
     }
