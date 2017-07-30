@@ -26,7 +26,7 @@ import android.view.Window;
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
