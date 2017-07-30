@@ -1,11 +1,5 @@
 package com.kekcom.thewokingdead;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -26,25 +20,27 @@ import android.view.SurfaceView;
 import com.kekcom.thewokingdead.data.GameLevelData;
 import com.kekcom.thewokingdead.data.GameStageData;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 /**
  * Created by Marcus on 7/29/2017.
  */
 
 public class MainView extends SurfaceView implements SurfaceHolder.Callback
 {
+    public static final int STATE_RUNNING = 1;
+    public static final int STATE_PAUSED = 2;
     private static final int CONTROLS_PADDING = 10;
-
     private static final int START_STAGE = 1;
     private static final int START_LEVEL = 1;
-
     private static final int DIRECTION_UP = 1;
     private static final int DIRECTION_DOWN = 2;
     private static final int DIRECTION_LEFT = 3;
     private static final int DIRECTION_RIGHT = 4;
-
-    public static final int STATE_RUNNING = 1;
-    public static final int STATE_PAUSED = 2;
-
     private int mScreenXMax = 0;
     private int mScreenYMax = 0;
     private int mScreenXCenter = 0;
@@ -107,178 +103,47 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private WeaponObject playerWeapon;
 
     private List<PlayerLife> playerLives;
+    private GameThread thread;
 
-    class GameThread extends Thread
+    public MainView(Context context, Start activity, int stage, int level, float screenDensity)
     {
-        public GameThread(SurfaceHolder surfaceHolder, Context context,
-                          Handler handler)
-        {
-            mGameSurfaceHolder = surfaceHolder;
-            mGameContext = context;
+        super(context);
 
-            Resources res = context.getResources();
+        mGameContext = context;
+        mGameActivity = activity;
 
-            mBackgroundImage = BitmapFactory.decodeResource(res, R.drawable.canvas_bg_01);
+        mScreenDensity = screenDensity;
 
-            Display display = mGameActivity.getWindowManager().getDefaultDisplay();
-            mScreenXMax = display.getWidth();
-            mScreenYMax = display.getHeight();
-            mScreenXCenter = (mScreenXMax / 2);
-            mScreenYCenter = (mScreenYMax / 2);
+        mPlayerStage = stage;
+        mPlayerLevel = level;
 
-            setGameStartState();
+        mGameLevelData = new GameLevelData(context);
+        mGameStageData = new GameStageData(context);
+
+        mFloorBaseTemplates = mGameLevelData.getLevelData();
+
+        SurfaceHolder holder = getHolder();
+        holder.addCallback(this);
+
+        thread = new GameThread(holder, context, null);
+
+        setFocusable(true);
+
+        mUiTextPaint = new Paint();
+        mUiTextPaint.setStyle(Paint.Style.FILL);
+        mUiTextPaint.setColor(Color.YELLOW);
+        mUiTextPaint.setAntiAlias(true);
+
+
+        Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
+        if (uiTypeface != null) {
+            mUiTextPaint.setTypeface(uiTypeface);
         }
 
-        public void setSurfaceSize(int width, int height)
-        {
-            synchronized (mGameSurfaceHolder)
-            {
-                mBackgroundImage = Bitmap.createScaledBitmap(mBackgroundImage,
-                        width, height, true);
-            }
-        }
+        mUiTextPaint.setTextSize(mGameContext.getApplicationContext().getResources().getDimensionPixelSize(R.dimen.ui_text_size));
 
-        public void setRunning(boolean run)
-        {
-            mGameRun = run;
-        }
-
-        public void doStart()
-        {
-            setState(STATE_RUNNING);
-        }
-
-        public void setState(int state)
-        {
-            mGameState = state;
-        }
-
-        @Override
-        public void run()
-        {
-            while (mGameRun)
-            {
-                Canvas c = null;
-                try
-                {
-                    c = mGameSurfaceHolder.lockCanvas(null);
-                    synchronized (mGameSurfaceHolder)
-                    {
-                        long startTimeFrame = System.currentTimeMillis();
-
-                        if (mGameState == STATE_RUNNING)
-                        {
-                            updatePlayerObject();
-                            updateEnemyObject();
-                            updatePlayerWeapon();
-                        }
-
-                        doDraw(c);
-
-                        mPlayerObject.setTimeThisFrame(System.currentTimeMillis() - startTimeFrame);
-                        if(mPlayerObject.getTimeThisFrame() >= 1){
-                            mPlayerObject.setFps(1000 / mPlayerObject.getTimeThisFrame());
-                        }
-                    }
-                } finally
-                {
-                    if (c != null)
-                    {
-                        mGameSurfaceHolder.unlockCanvasAndPost(c);
-                    }
-                }
-            }
-
-            return;
-        }
-
-        public void pause()
-        {
-            synchronized (mGameSurfaceHolder)
-            {
-                if (mGameState == STATE_RUNNING)
-                {
-                    setState(STATE_PAUSED);
-                }
-            }
-        }
-
-        public void unpause()
-        {
-            synchronized (mGameSurfaceHolder)
-            {
-                if (mGameState != STATE_RUNNING)
-                {
-                    setState(STATE_RUNNING);
-                }
-            }
-        }
-
-        private void centerView()
-        {
-            mPlayerObject.setUnmodifiedX(mPlayerObject.getX() + mScreenXCenter);
-            mPlayerObject.setUnmodifiedY(mPlayerObject.getY() + mScreenYCenter);
-
-            mScreenXOffset = (mPlayerObject.getX() - mScreenXCenter);
-            mScreenYOffset = (mPlayerObject.getY() - mScreenYCenter);
-
-            mPlayerObject.setX(mScreenXCenter);
-            mPlayerObject.setY(mScreenYCenter);
-        }
-
-        private void doDraw(Canvas canvas)
-        {
-            centerView();
-
-            if (canvas != null && mGameRun)
-            {
-                canvas.drawBitmap(mBackgroundImage, 0, 0, null);
-
-                if (!updatingFloorBase)
-                {
-                    drawFloorBase(canvas);
-                }
-
-                if (mPlayerObject != null)
-
-                    mPlayerObject.setWhereToDraw();
-                mPlayerObject.getCurrentFrame(mPlayerMoving, mPlayerDirection);
-                canvas.drawBitmap(mPlayerObject.getBitmap(), mPlayerObject.getFrameToDraw(), mPlayerObject.getWhereToDraw(), mUiTextPaint);
-            }
-
-            if(mEnemyList.size() > 0){
-                for(EnemyObject enemy : mEnemyList){
-                    enemy.setX(enemy.getX() - mScreenXOffset);
-                    enemy.setY(enemy.getY() - mScreenYOffset);
-
-                    enemy.setWhereToDraw();
-                    enemy.getCurrentFrame(enemy.isMoving(),enemy.getDirection());
-                    canvas.drawBitmap(enemy.getBitmap(), enemy.getFrameToDraw(), enemy.getWhereToDraw(), mUiTextPaint);
-                }
-            }
-
-            if(playerWeapon.isFiring()){
-                playerWeapon.setX(playerWeapon.getX() - mScreenXOffset);
-                playerWeapon.setY(playerWeapon.getY() - mScreenYOffset);
-
-                playerWeapon.setWhereToDraw();
-                playerWeapon.getCurrentFrame(playerWeapon.getDirection());
-                canvas.drawBitmap(playerWeapon.getBitmap(), playerWeapon.getFrameToDraw(), playerWeapon.getWhereToDraw(), mUiTextPaint);
-            }
-
-
-            mUiTextPaint.setColor(Color.argb(255, 0, 0, 0));
-
-            Path path = new Path();
-            path.addCircle(mPlayerObject.getX() + mPlayerObject.getWidth()/2, mPlayerObject.getY() + mPlayerObject.getHeight()/2, mPlayerObject.getWidth()*3, Path.Direction.CW);
-            path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-            canvas.drawPath(path, mUiTextPaint);
-
-            drawControls(canvas);
-            drawPlayerLives(canvas);
-
-            canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
-        }
+        startLevel();
+        thread.doStart();
     }
 
     private void drawFloorBase(Canvas canvas)
@@ -302,7 +167,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             }
         }
     }
-
 
     private void drawControls(Canvas canvas)
     {
@@ -479,7 +343,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
         int floorBaseSize = mFloorBase.size();
         for (int i = 0; i < floorBaseSize; i++) {
-            floorBase = (FloorBase) mFloorBase.get(i);
+            floorBase = mFloorBase.get(i);
             if ((floorBase != null) && floorBase.isCollisionTile()) {
                 if ((floorBase.getX() == x) && (floorBase.getY() == y)) {
                     continue;
@@ -518,51 +382,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         mLastStatusMessage = "Collision with exit tile";
     }
 
-    private GameThread thread;
-
-
-    public MainView(Context context, Start activity, int stage, int level, float screenDensity)
-    {
-        super(context);
-
-        mGameContext = context;
-        mGameActivity = activity;
-
-        mScreenDensity = screenDensity;
-
-        mPlayerStage = stage;
-        mPlayerLevel = level;
-
-        mGameLevelData = new GameLevelData(context);
-        mGameStageData = new GameStageData(context);
-
-        mFloorBaseTemplates = mGameLevelData.getLevelData();
-
-        SurfaceHolder holder = getHolder();
-        holder.addCallback(this);
-
-        thread = new GameThread(holder, context, null);
-
-        setFocusable(true);
-
-        mUiTextPaint = new Paint();
-        mUiTextPaint.setStyle(Paint.Style.FILL);
-        mUiTextPaint.setColor(Color.YELLOW);
-        mUiTextPaint.setAntiAlias(true);
-
-
-//        Typeface uiTypeface = Typeface.createFromAsset(activity.getAssets(), "fonts/Molot.otf");
-//        if (uiTypeface != null) {
-//            mUiTextPaint.setTypeface(uiTypeface);
-//        }
-
-        mUiTextPaint.setTextSize(mGameContext.getApplicationContext().getResources().getDimensionPixelSize(R.dimen.ui_text_size));
-
-        startLevel();
-        thread.doStart();
-    }
-
-
     public GameThread getThread()
     {
         return thread;
@@ -573,7 +392,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     {
         thread.setSurfaceSize(width, height);
     }
-
 
     public void surfaceCreated(SurfaceHolder holder)
     {
@@ -861,7 +679,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         thread.unpause();
     }
 
-
     private Bitmap setAndGetFloorBaseBitmap(int resourceId)
     {
         if (!mFloorBaseBitmaps.containsKey(resourceId))
@@ -883,5 +700,154 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private int getPixelValueForDensity(int pixels)
     {
         return (int) (pixels * mScreenDensity);
+    }
+
+    class GameThread extends Thread {
+        public GameThread(SurfaceHolder surfaceHolder, Context context,
+                          Handler handler) {
+            mGameSurfaceHolder = surfaceHolder;
+            mGameContext = context;
+
+            Resources res = context.getResources();
+
+            mBackgroundImage = BitmapFactory.decodeResource(res, R.drawable.canvas_bg_01);
+
+            Display display = mGameActivity.getWindowManager().getDefaultDisplay();
+            mScreenXMax = display.getWidth();
+            mScreenYMax = display.getHeight();
+            mScreenXCenter = (mScreenXMax / 2);
+            mScreenYCenter = (mScreenYMax / 2);
+
+            setGameStartState();
+        }
+
+        public void setSurfaceSize(int width, int height) {
+            synchronized (mGameSurfaceHolder) {
+                mBackgroundImage = Bitmap.createScaledBitmap(mBackgroundImage,
+                        width, height, true);
+            }
+        }
+
+        public void setRunning(boolean run) {
+            mGameRun = run;
+        }
+
+        public void doStart() {
+            setState(STATE_RUNNING);
+        }
+
+        public void setState(int state) {
+            mGameState = state;
+        }
+
+        @Override
+        public void run() {
+            while (mGameRun) {
+                Canvas c = null;
+                try {
+                    c = mGameSurfaceHolder.lockCanvas(null);
+                    synchronized (mGameSurfaceHolder) {
+                        long startTimeFrame = System.currentTimeMillis();
+
+                        if (mGameState == STATE_RUNNING) {
+                            updatePlayerObject();
+                            updateEnemyObject();
+                            updatePlayerWeapon();
+                        }
+
+                        doDraw(c);
+
+                        mPlayerObject.setTimeThisFrame(System.currentTimeMillis() - startTimeFrame);
+                        if (mPlayerObject.getTimeThisFrame() >= 1) {
+                            mPlayerObject.setFps(1000 / mPlayerObject.getTimeThisFrame());
+                        }
+                    }
+                } finally {
+                    if (c != null) {
+                        mGameSurfaceHolder.unlockCanvasAndPost(c);
+                    }
+                }
+            }
+
+            return;
+        }
+
+        public void pause() {
+            synchronized (mGameSurfaceHolder) {
+                if (mGameState == STATE_RUNNING) {
+                    setState(STATE_PAUSED);
+                }
+            }
+        }
+
+        public void unpause() {
+            synchronized (mGameSurfaceHolder) {
+                if (mGameState != STATE_RUNNING) {
+                    setState(STATE_RUNNING);
+                }
+            }
+        }
+
+        private void centerView() {
+            mPlayerObject.setUnmodifiedX(mPlayerObject.getX() + mScreenXCenter);
+            mPlayerObject.setUnmodifiedY(mPlayerObject.getY() + mScreenYCenter);
+
+            mScreenXOffset = (mPlayerObject.getX() - mScreenXCenter);
+            mScreenYOffset = (mPlayerObject.getY() - mScreenYCenter);
+
+            mPlayerObject.setX(mScreenXCenter);
+            mPlayerObject.setY(mScreenYCenter);
+        }
+
+        private void doDraw(Canvas canvas) {
+            centerView();
+
+            if (canvas != null && mGameRun) {
+                canvas.drawBitmap(mBackgroundImage, 0, 0, null);
+
+                if (!updatingFloorBase) {
+                    drawFloorBase(canvas);
+                }
+
+                if (mPlayerObject != null)
+
+                    mPlayerObject.setWhereToDraw();
+                mPlayerObject.getCurrentFrame(mPlayerMoving, mPlayerDirection);
+                canvas.drawBitmap(mPlayerObject.getBitmap(), mPlayerObject.getFrameToDraw(), mPlayerObject.getWhereToDraw(), mUiTextPaint);
+            }
+
+            if (mEnemyList.size() > 0) {
+                for (EnemyObject enemy : mEnemyList) {
+                    enemy.setX(enemy.getX() - mScreenXOffset);
+                    enemy.setY(enemy.getY() - mScreenYOffset);
+
+                    enemy.setWhereToDraw();
+                    enemy.getCurrentFrame(enemy.isMoving(), enemy.getDirection());
+                    canvas.drawBitmap(enemy.getBitmap(), enemy.getFrameToDraw(), enemy.getWhereToDraw(), mUiTextPaint);
+                }
+            }
+
+            if (playerWeapon.isFiring()) {
+                playerWeapon.setX(playerWeapon.getX() - mScreenXOffset);
+                playerWeapon.setY(playerWeapon.getY() - mScreenYOffset);
+
+                playerWeapon.setWhereToDraw();
+                playerWeapon.getCurrentFrame(playerWeapon.getDirection());
+                canvas.drawBitmap(playerWeapon.getBitmap(), playerWeapon.getFrameToDraw(), playerWeapon.getWhereToDraw(), mUiTextPaint);
+            }
+
+
+            mUiTextPaint.setColor(Color.argb(255, 0, 0, 0));
+
+            Path path = new Path();
+            path.addCircle(mPlayerObject.getX() + mPlayerObject.getWidth() / 2, mPlayerObject.getY() + mPlayerObject.getHeight() / 2, mPlayerObject.getWidth() * 3, Path.Direction.CW);
+            path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+            canvas.drawPath(path, mUiTextPaint);
+
+            drawControls(canvas);
+            drawPlayerLives(canvas);
+
+            canvas.drawText(mLastStatusMessage, 30, 50, mUiTextPaint);
+        }
     }
 }
