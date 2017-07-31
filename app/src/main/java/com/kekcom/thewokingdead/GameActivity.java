@@ -33,12 +33,32 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         Context mContext = getApplicationContext();
 
-        mSoundIDs = new int[5];
+        mSoundIDs = new int[6];
         MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
+        if (MainActivity.toggleMuteHomeButton.isChecked()) {
+            MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+
+//                    Toast.makeText(MainActivity.this, "ON", Toast.LENGTH_SHORT);
+
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+            //toggleMuteButton.setSoundEffectsEnabled(true);
+        } else {
+
+            MainActivity.mediaPlayer.setVolume(0, 0);
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+            //Toast.makeText(MainActivity.this, "OFF", Toast.LENGTH_SHORT);
+
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+            //toggleMuteButton.setSoundEffectsEnabled(false);
+        }
         MainActivity.mediaPlayer.start();
         MainActivity.mediaPlayer.setLooping(true);
-
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
@@ -64,6 +84,7 @@ public class GameActivity extends Activity {
         mSoundIDs[2] = mSoundPool.load(this, R.raw.zom3, 1);
         mSoundIDs[3] = mSoundPool.load(this, R.raw.zom2, 1);
         mSoundIDs[4] = mSoundPool.load(this, R.raw.zom1, 1);
+        mSoundIDs[5] = mSoundPool.load(this, R.raw.stair, 1);
         //mSoundPool.play(soundID, volume, volume, 1, 0, 1f);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);

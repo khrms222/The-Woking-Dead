@@ -35,7 +35,7 @@ public class GameDAO extends SQLiteOpenHelper {
 
     private static final String[] POPULATE_TABLE_GAME_TILES = {
             "INSERT INTO " + GameLevelData.TABLE_NAME + " VALUES "
-                    + "(1,\"Tile 01\"," + FloorBase.TYPE_OBSTACLE + "," + R.drawable.tile_01 + ",1);",
+                    + "(1,\"Tile 01\"," + FloorBase.TYPE_OBSTACLE + "," + R.drawable.tile_04 + ",1);",
 
             "INSERT INTO " + GameLevelData.TABLE_NAME + " VALUES "
                     + "(2,\"Dangerous Tile 01\"," + FloorBase.TYPE_DANGEROUS + "," + R.drawable.tile_danger_01 + ",1);",
