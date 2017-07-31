@@ -6,12 +6,19 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.ToggleButton;
+
+import com.kekcom.thewokingdead.MainActivity;
 
 public class GameActivity extends Activity {
     private MainView mMainView = null;
@@ -20,6 +27,8 @@ public class GameActivity extends Activity {
     private float mScreenDensity;
     private SoundPool spool;
     private int soundID;
+
+    private ToggleButton toggleMuteGameButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
