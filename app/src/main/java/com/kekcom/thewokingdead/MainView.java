@@ -849,8 +849,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 drawPlayerLives(canvas);
 
                 mUiTextPaint.setColor(Color.argb(255, 255, 0, 0));
-                mUiTextPaint.setTextSize(150);
-                canvas.drawText(mLastStatusMessage, mScreenXMax/2 - mScreenXMax/4, mScreenYMax/3, mUiTextPaint);
+                mUiTextPaint.setTextSize(100);
+                canvas.drawText(mLastStatusMessage, getPixelValueForDensity(100), getPixelValueForDensity(100), mUiTextPaint);
 
                 drawFireButton(canvas);
             }
