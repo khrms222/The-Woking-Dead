@@ -54,33 +54,33 @@ public class GameStageData extends GameDAO {
     }
 
     public static ArrayList<String> parse() {
-        String[][] gw = RNGenie();
-        Boolean check = true;
-        /*
-        while (check) {
-            int x = (int) (Math.random() * size);
-            int y = (int) (Math.random() * size);
-            if (gw[x][y] == "00") {
-                FIELD_ID_PLAYER_START_TILE_X = x;
-                FIELD_ID_PLAYER_START_TILE_Y = y;
-                check = false;
+        ArrayList<String> yoooo = new ArrayList<>();
+        for (int k = 0; k <= 3; k++) {
+            String[][] gw = RNGenie();
+            boolean check = true;
+            while (check) {
+                int x = (int) (Math.random() * size);
+                int y = (int) (Math.random() * size);
+                if (gw[x][y] == "00") {
+                    gw[x][y] = "03";
+                    check = false;
+                }
             }
-        }
-        */
-        ArrayList<String> yoooo = new ArrayList<>(size);
-        String command = "INSERT INTO " + GameStageData.TABLE_NAME + " VALUES "
-                + "(null," + FIELD_ID_STAGE + "," + FIELD_ID_LEVEL + "," + FIELD_ID_PLAYER_START_TILE_X + "," + FIELD_ID_PLAYER_START_TILE_Y + ",\"";
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (j == size - 1)
-                    command += gw[i][j];
-                else
-                    command += gw[i][j] + ",";
+
+            String command = "INSERT INTO " + GameStageData.TABLE_NAME + " VALUES "
+                    + "(null," + (FIELD_ID_STAGE++) + "," + (FIELD_ID_LEVEL++) + "," + FIELD_ID_PLAYER_START_TILE_X + "," + FIELD_ID_PLAYER_START_TILE_Y + ",\"";
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (j == size - 1)
+                        command += gw[i][j];
+                    else
+                        command += gw[i][j] + ",";
+                }
+                command += GameStageData.TILE_DATA_LINE_BREAK;
             }
-            command += GameStageData.TILE_DATA_LINE_BREAK;
+            command += "\");";
+            yoooo.add(command);
         }
-        command += "\");";
-        yoooo.add(command);
         return yoooo;
     }
 

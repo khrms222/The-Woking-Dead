@@ -2,7 +2,7 @@ package com.kekcom.thewokingdead;
 
 import android.content.Context;
 
-public class MainUi extends GameObject {
+class MainUi extends GameObject {
     public static final int STATE_NORMAL = 1;
     public static final int STATE_INACTIVE = 2;
     public static final int STATE_ACTIVE = 3;
