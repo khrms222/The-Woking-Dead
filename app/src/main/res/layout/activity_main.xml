@@ -8,19 +8,92 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+
+    android:background="@drawable/zwbg"
     tools:context="com.kekcom.thewokingdead.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="THE WOKING DEAD"
+        android:textAlignment="center"
+        android:textColor="@color/titleColor"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        android:id="@+id/textView"
+        android:layout_below="@+id/toggleMuteHomeButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp" />
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
+
 
     <Button
-        android:id="@+id/buttonMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+
+        android:id="@+id/buttonMain"
+
+        android:text="Play"
+
         android:layout_centerVertical="true"
-        android:text="Play" />
+        android:layout_centerHorizontal="true" />
+
+
+    <ToggleButton
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+
+        android:id="@+id/toggleMuteHomeButton"
+
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <!--<ToggleButton-->
+    <!--android:layout_width="60dp"-->
+    <!--android:layout_height="50dp"-->
+
+    <!--android:id="@+id/toggleMuteGameButton"-->
+
+
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentStart="true" />-->
+
+    <!--<ToggleButton-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+
+    <!--android:id="@+id/toggleButtonOff"-->
+
+    <!--android:text="Toggle Button" />-->
+
+    <!--<ToggleButton-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+
+    <!--android:checked="true"-->
+
+    <!--android:id="@+id/toggleButtonOn"-->
+
+    <!--android:textOff="@string/toggle_off"-->
+    <!--android:textOn="@string/toggle_on"-->
+    <!--/>-->
+
+    <!--<Button-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+
+    <!--android:id="@+id/soundDisplayButton"-->
+
+    <!--android:text="@string/sound_display"/>-->
 
 </RelativeLayout>
