@@ -43,11 +43,11 @@ public class GameStageData extends GameDAO {
         return b;
     }
 
-    private static String[][] RNGenie(int k) {
-        String[][] gw = new String[k][k];
-        for (int i = 0; i < k; i++) {
-            for (int j = 0; j < k; j++) {
-                if (i == 0 || i == k - 1 || j == 0 || j == size - 1)
+    private static String[][] RNGenie(int max) {
+        String[][] gw = new String[max][max];
+        for (int i = 0; i < gw.length; i++) {
+            for (int j = 0; j < gw[0].length; j++) {
+                if (i == 0 || i == (gw.length - 1) || j == 0 || j == (gw[0].length - 1))
                     gw[i][j] = "01";
                 else if (i % 2 == 0 && j % 2 == 0)
                     gw[i][j] = "01";
@@ -60,25 +60,26 @@ public class GameStageData extends GameDAO {
 
     public static ArrayList<String> parse() {
         ArrayList<String> yoooo = new ArrayList<>();
-        for (int k = 1; k <= 3; k++) {
-            String[][] gw = RNGenie(size + k);
-            boolean check = true;
-            while (check) {
+        for (int k = 1; k <= 10; k++) {
+            size = size + (k * 2);
+            String[][] gw = RNGenie(size);
+            boolean check1 = true;
+            while (check1) {
                 int x = (int) (Math.random() * size);
                 int y = (int) (Math.random() * size);
                 if (gw[x][y] == "00") {
                     gw[x][y] = "03";
-                    check = false;
+                    check1 = false;
                 }
             }
-            check = true;
-            while (check) {
+            boolean check2 = true;
+            while (check2) {
                 int x = (int) (Math.random() * size);
                 int y = (int) (Math.random() * size);
                 if (gw[x][y] == "00") {
                     a = x;
                     b = y;
-                    check = false;
+                    check2 = false;
                 }
             }
             String command = "INSERT INTO " + GameStageData.TABLE_NAME + " VALUES "

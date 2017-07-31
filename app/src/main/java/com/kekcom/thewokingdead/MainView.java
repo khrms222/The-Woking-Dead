@@ -600,7 +600,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private void setEnemyStart() {
 
-        mNumOfEnemies = 2;
+        mNumOfEnemies = (int) (Math.random() * 5) + 1;
 
         mEnemyMoveTimer = new EnemyMoveTimer(5000, 10000);
 
