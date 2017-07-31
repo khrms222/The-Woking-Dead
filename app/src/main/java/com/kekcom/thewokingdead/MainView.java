@@ -404,7 +404,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                     //handleDangerousTileCollision();
                     break;
                 case FloorBase.TYPE_EXIT:
-                    //handleExitTileCollision();
+                    handleExitTileCollision();
                     break;
                 default:
                     //mLastStatusMessage = "Collision with regular tile";
@@ -416,7 +416,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void handleExitTileCollision() {
-        mLastStatusMessage = "Collision with exit tile";
+        mLastStatusMessage = "You go up the stairs";
+        mPlayerLevel++;
+//        thread.pause();
+//        startLevel();
     }
 
     public GameThread getThread() {
