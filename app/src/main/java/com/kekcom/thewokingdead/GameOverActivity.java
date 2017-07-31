@@ -2,8 +2,9 @@ package com.kekcom.thewokingdead;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.support.v7.app.AppCompatActivity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,9 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_game_over);
 
         //setToFullScreen();
+        MainActivity.mediaPlayer.release();
+        MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.menu);
+        MainActivity.mediaPlayer.start();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -48,6 +52,17 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
+    protected void onPause() {
+        if (MainActivity.mediaPlayer != null || MainActivity.mediaPlayer.isPlaying()) {
+
+            MainActivity.mediaPlayer.stop();
+            MainActivity.mediaPlayer.release();
+        }
+        super.onPause();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         //setToFullScreen();
@@ -56,6 +71,7 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         //setToFullScreen();
+
         switch(v.getId()){
             case R.id.backButton:
                 Intent mainMenu = new Intent(GameOverActivity.this, MainActivity.class);

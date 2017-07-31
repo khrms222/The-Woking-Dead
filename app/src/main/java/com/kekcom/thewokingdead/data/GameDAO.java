@@ -41,7 +41,7 @@ public class GameDAO extends SQLiteOpenHelper {
                     + "(2,\"Dangerous Tile 01\"," + FloorBase.TYPE_DANGEROUS + "," + R.drawable.tile_danger_01 + ",1);",
 
             "INSERT INTO " + GameLevelData.TABLE_NAME + " VALUES "
-                    + "(3,\"Exit Tile\"," + FloorBase.TYPE_EXIT + "," + R.drawable.tile_exit + ",1);"
+                    + "(3,\"Exit Tile\"," + FloorBase.TYPE_EXIT + "," + R.drawable.stairs50 + ",1);"
     };
 
     private static ArrayList<String> POPULATE_TABLE_GAME_LEVEL_TILES = GameStageData.parse();

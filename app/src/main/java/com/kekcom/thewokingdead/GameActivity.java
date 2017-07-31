@@ -15,14 +15,13 @@ import android.view.MenuItem;
 import android.view.Window;
 
 public class GameActivity extends Activity {
+    private static int[] mSoundIDs;
+    public boolean canPlay = false;
+    int sNumLoaded = 0;
     private MainView mMainView = null;
-
     private DisplayMetrics mMetrics = new DisplayMetrics();
     private float mScreenDensity;
     private SoundPool mSoundPool;
-    private static int[] mSoundIDs;
-    int sNumLoaded = 0;
-    private boolean canPlay = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +29,7 @@ public class GameActivity extends Activity {
         Context mContext = getApplicationContext();
 
         mSoundIDs = new int[5];
+        MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
         MainActivity.mediaPlayer.start();
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
