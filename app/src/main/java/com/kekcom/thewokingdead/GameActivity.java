@@ -36,9 +36,29 @@ public class GameActivity extends Activity {
         mSoundIDs = new int[5];
         MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
+        if (MainActivity.toggleMuteHomeButton.isChecked()) {
+            MainActivity.mediaPlayer.setVolume(0.90f, 0.90f);
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+
+//                    Toast.makeText(MainActivity.this, "ON", Toast.LENGTH_SHORT);
+
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+            //toggleMuteButton.setSoundEffectsEnabled(true);
+        } else {
+
+            MainActivity.mediaPlayer.setVolume(0, 0);
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+            //Toast.makeText(MainActivity.this, "OFF", Toast.LENGTH_SHORT);
+
+//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+            //toggleMuteButton.setSoundEffectsEnabled(false);
+        }
         MainActivity.mediaPlayer.start();
         MainActivity.mediaPlayer.setLooping(true);
-
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
