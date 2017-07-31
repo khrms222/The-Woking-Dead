@@ -106,6 +106,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private MainUi fireButton = null;
 
+    private int enemyKillCount = 0;
+
     public MainView(Context context, GameActivity activity, int stage, int level, float screenDensity) {
         super(context);
 
@@ -355,6 +357,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 if (playerWeapon.getRect().intersect(enemy.getRect())) {
                     iter.remove();
                     playerWeapon.setFiring(false);
+                    enemyKillCount++;
                 }
             }
 
@@ -851,6 +854,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 mUiTextPaint.setColor(Color.argb(255, 255, 0, 0));
                 mUiTextPaint.setTextSize(100);
                 canvas.drawText(mLastStatusMessage, getPixelValueForDensity(100), getPixelValueForDensity(100), mUiTextPaint);
+                canvas.drawText("Enemies Killed: " + enemyKillCount, 0, mScreenYMax - getPixelValueForDensity(200), mUiTextPaint);
 
                 drawFireButton(canvas);
             }
