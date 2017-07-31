@@ -602,6 +602,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void setEnemyStart() {
+        mEnemyList.removeAll(mEnemyList);
 
         mNumOfEnemies = (int) (Math.random() * 5) + 1;
 
@@ -850,7 +851,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 Path path = new Path();
                 path.addCircle(mPlayerUnit.getX() + mPlayerUnit.getWidth()/2, mPlayerUnit.getY() + mPlayerUnit.getHeight()/2, mPlayerUnit.getWidth()*3, Path.Direction.CW);
                 path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-                canvas.drawPath(path, mUiTextPaint);
+                //canvas.drawPath(path, mUiTextPaint);
 
                 drawPlayerLives(canvas);
 
