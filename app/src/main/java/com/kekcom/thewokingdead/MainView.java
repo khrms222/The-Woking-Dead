@@ -77,10 +77,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private int mPlayerDirection = 0;
 
-    private MainUi mCtrlUpArrow = null;
-    private MainUi mCtrlDownArrow = null;
-    private MainUi mCtrlLeftArrow = null;
-    private MainUi mCtrlRightArrow = null;
+    private MainUI mCtrlUpArrow = null;
+    private MainUI mCtrlDownArrow = null;
+    private MainUI mCtrlLeftArrow = null;
+    private MainUI mCtrlRightArrow = null;
 
     private Paint mUiTextPaint = null;
     private String mLastStatusMessage = "";
@@ -104,7 +104,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private List<PlayerLife> playerLives;
 
-    private MainUi fireButton = null;
+    private MainUI fireButton = null;
 
     private int enemyKillCount = 0;
 
@@ -243,6 +243,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     }
     
     private void updateEnemyUnit() {
+        if (mEnemyList.size() != 0) {
 
         for (EnemyObject enemy : mEnemyList) {
 
@@ -296,7 +297,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         }
                     }
 
-                    if(playerLives.size() == 0){
+                    if (playerLives.size() == 0) {
                         mGameRun = false;
 
                         Intent i = new Intent(mGameContext, GameOverActivity.class);
@@ -318,6 +319,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
             }
 
         }
+    }
     }
 
     public void updatePlayerWeapon(){
@@ -536,26 +538,26 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     /*
     private void setControlsStart() {
         if (mCtrlDownArrow == null) {
-            mCtrlDownArrow = new MainUi(mGameContext, R.drawable.ctrl_down_arrow);
+            mCtrlDownArrow = new MainUI(mGameContext, R.drawable.ctrl_down_arrow);
 
             mCtrlDownArrow.setX(mScreenXMax - ((mCtrlDownArrow.getWidth() * 2) + getPixelValueForDensity(CONTROLS_PADDING)));
             mCtrlDownArrow.setY(mScreenYMax - (mCtrlDownArrow.getHeight() + getPixelValueForDensity(CONTROLS_PADDING)));
         }
 
         if (mCtrlUpArrow == null) {
-            mCtrlUpArrow = new MainUi(mGameContext, R.drawable.ctrl_up_arrow);
+            mCtrlUpArrow = new MainUI(mGameContext, R.drawable.ctrl_up_arrow);
             mCtrlUpArrow.setX(mCtrlDownArrow.getX());
             mCtrlUpArrow.setY(mCtrlDownArrow.getY() - (mCtrlUpArrow.getHeight() * 2));
         }
 
         if (mCtrlLeftArrow == null) {
-            mCtrlLeftArrow = new MainUi(mGameContext, R.drawable.ctrl_left_arrow);
+            mCtrlLeftArrow = new MainUI(mGameContext, R.drawable.ctrl_left_arrow);
             mCtrlLeftArrow.setX(mCtrlDownArrow.getX() - mCtrlLeftArrow.getWidth());
             mCtrlLeftArrow.setY(mCtrlDownArrow.getY() - mCtrlLeftArrow.getHeight());
         }
 
         if (mCtrlRightArrow == null) {
-            mCtrlRightArrow = new MainUi(mGameContext, R.drawable.ctrl_right_arrow);
+            mCtrlRightArrow = new MainUI(mGameContext, R.drawable.ctrl_right_arrow);
 
             mCtrlRightArrow.setX(mScreenXMax - (mCtrlLeftArrow.getWidth() + getPixelValueForDensity(CONTROLS_PADDING)));
             mCtrlRightArrow.setY(mCtrlLeftArrow.getY());
@@ -565,7 +567,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private void setFireButton(){
         if(fireButton == null){
-            fireButton = new MainUi(mGameContext, R.drawable.wpbf);
+            fireButton = new MainUI(mGameContext, R.drawable.wpbf);
             fireButton.setX(mScreenXMax - fireButton.getWidth());
             fireButton.setY(mScreenYMax - fireButton.getHeight());
         }
@@ -604,7 +606,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private void setEnemyStart() {
         mEnemyList.removeAll(mEnemyList);
 
-        mNumOfEnemies = (int) (Math.random() * 5) + 1;
+        mNumOfEnemies = (int) (Math.random() * 3) + 1;
 
         mEnemyMoveTimer = new EnemyMoveTimer(5000, 10000);
 
