@@ -16,12 +16,17 @@ import android.view.Window;
 
 public class GameActivity extends Activity {
     private static int[] mSoundIDs;
+    private static SoundPool mSoundPool;
+    private static float volume;
     public boolean canPlay = false;
     int sNumLoaded = 0;
     private MainView mMainView = null;
     private DisplayMetrics mMetrics = new DisplayMetrics();
     private float mScreenDensity;
-    private SoundPool mSoundPool;
+
+    public static void sfx(int i) {
+        mSoundPool.play(mSoundIDs[i], volume, volume, 1, 0, 1f);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,10 +37,13 @@ public class GameActivity extends Activity {
         MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
         MainActivity.mediaPlayer.start();
+        MainActivity.mediaPlayer.setLooping(true);
+
+
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        float volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         android.util.Log.v("SOUND", "test");
         //android.util.Log.v("SOUND","["+volume+"]["+mSoundPool.play(soundID, volume, volume, 1, 0, 1f)+"]");
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
@@ -102,6 +110,7 @@ public class GameActivity extends Activity {
         if(MainActivity.mediaPlayer != null || MainActivity.mediaPlayer.isPlaying()){
 
             MainActivity.mediaPlayer.pause();
+            MainActivity.mediaPlayer.setLooping(false);
         }
         super.onPause();
 
@@ -114,6 +123,7 @@ public class GameActivity extends Activity {
         if(MainActivity.mediaPlayer != null || !MainActivity.mediaPlayer.isPlaying()){
 
             MainActivity.mediaPlayer.start();
+            MainActivity.mediaPlayer.setLooping(true);
         }
     }
 }

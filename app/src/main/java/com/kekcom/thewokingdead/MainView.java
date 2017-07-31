@@ -244,7 +244,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     
     private void updateEnemyUnit() {
         if (mEnemyList.size() != 0) {
-
         for (EnemyObject enemy : mEnemyList) {
 
             if (mEnemyMoveTimer.getTimeToMove()) {
@@ -254,6 +253,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                 if (enemy.timeToChangeDirection()) {
                     enemy.setDirection(new Random().nextInt(4) + 1);
+                    GameActivity.sfx(new Random().nextInt(3) + 2);
                     enemy.setTimeToChangeDirection(false);
 
                 }
@@ -292,7 +292,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                         if (enemy.getRect().intersect(mPlayerUnit.getRect()) && enemy.timeToAttack()) {
                             enemy.setLastTimeAttacked(System.currentTimeMillis());
                             iter.remove();
-
+                            GameActivity.sfx(0);
                             mLastStatusMessage = "Enemy hit you!";
                         }
                     }
@@ -359,6 +359,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 if (playerWeapon.getRect().intersect(enemy.getRect())) {
                     iter.remove();
                     playerWeapon.setFiring(false);
+                    GameActivity.sfx(1);
                     enemyKillCount++;
                 }
             }
