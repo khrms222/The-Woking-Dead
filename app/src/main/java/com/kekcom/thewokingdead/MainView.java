@@ -851,14 +851,18 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 Path path = new Path();
                 path.addCircle(mPlayerUnit.getX() + mPlayerUnit.getWidth()/2, mPlayerUnit.getY() + mPlayerUnit.getHeight()/2, mPlayerUnit.getWidth()*3, Path.Direction.CW);
                 path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-                //canvas.drawPath(path, mUiTextPaint);
+                canvas.drawPath(path, mUiTextPaint);
 
                 drawPlayerLives(canvas);
 
                 mUiTextPaint.setColor(Color.argb(255, 255, 0, 0));
                 mUiTextPaint.setTextSize(100);
                 canvas.drawText(mLastStatusMessage, getPixelValueForDensity(100), getPixelValueForDensity(100), mUiTextPaint);
-                canvas.drawText("Enemies Killed: " + enemyKillCount, 0, mScreenYMax - getPixelValueForDensity(200), mUiTextPaint);
+
+                mUiTextPaint.setTextSize(75);
+                canvas.drawText("Enemies Killed: " + enemyKillCount, 0, mScreenYMax - getPixelValueForDensity(50), mUiTextPaint);
+
+                canvas.drawText("Level: " + mPlayerLevel, 0, getPixelValueForDensity(30), mUiTextPaint);
 
                 drawFireButton(canvas);
             }
