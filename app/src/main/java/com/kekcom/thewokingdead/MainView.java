@@ -418,8 +418,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private void handleExitTileCollision() {
         mLastStatusMessage = "You go up the stairs";
         mPlayerLevel++;
-//        thread.pause();
-//        startLevel();
+        thread.pause();
+        startLevel();
     }
 
     public GameThread getThread() {

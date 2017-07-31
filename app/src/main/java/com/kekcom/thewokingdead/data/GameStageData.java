@@ -26,16 +26,21 @@ public class GameStageData extends GameDAO {
     private static int FIELD_ID_PLAYER_START_TILE_X = 3;
     private static int FIELD_ID_PLAYER_START_TILE_Y = 4;
     private static int size = 7;
+
+    private static int a = 3;
+    private static int b = 3;
     public GameStageData(Context ctx) {
         super(ctx);
     }
 
     public static int getFieldIdPlayerStartTileX() {
-        return FIELD_ID_PLAYER_START_TILE_X;
+
+        return a;
     }
 
     public static int getFieldIdPlayerStartTileY() {
-        return FIELD_ID_PLAYER_START_TILE_Y;
+
+        return b;
     }
 
     private static String[][] RNGenie(int k) {
@@ -55,7 +60,7 @@ public class GameStageData extends GameDAO {
 
     public static ArrayList<String> parse() {
         ArrayList<String> yoooo = new ArrayList<>();
-        for (int k = 0; k < 3; k++) {
+        for (int k = 1; k <= 3; k++) {
             String[][] gw = RNGenie(size + k);
             boolean check = true;
             while (check) {
@@ -66,9 +71,18 @@ public class GameStageData extends GameDAO {
                     check = false;
                 }
             }
-
+            check = true;
+            while (check) {
+                int x = (int) (Math.random() * size);
+                int y = (int) (Math.random() * size);
+                if (gw[x][y] == "00") {
+                    a = x;
+                    b = y;
+                    check = false;
+                }
+            }
             String command = "INSERT INTO " + GameStageData.TABLE_NAME + " VALUES "
-                    + "(null," + (k++) + "," + (k++) + "," + FIELD_ID_PLAYER_START_TILE_X + "," + FIELD_ID_PLAYER_START_TILE_Y + ",\"";
+                    + "(null," + FIELD_ID_STAGE + "," + k + "," + a + "," + b + ",\"";
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     if (j == size - 1)
