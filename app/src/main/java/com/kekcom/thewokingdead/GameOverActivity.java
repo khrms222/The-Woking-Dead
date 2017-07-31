@@ -27,7 +27,7 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
         MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.menu);
         if (MainActivity.toggleMuteHomeButton.isChecked()) {
-            MainActivity.mediaPlayer.setVolume(0.90f, 0.90f);
+            MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
 //                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
 //                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
 

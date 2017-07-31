@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mediaPlayer = MediaPlayer.create(this, R.raw.unem);
-        mediaPlayer.start();
 
         setContentView(R.layout.activity_main);
         TextView tv = (TextView) findViewById(R.id.textView);
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //boolean toggleState = toggleMuteButton.isChecked();
                 if (toggleMuteHomeButton.isChecked()){
-                    mediaPlayer.setVolume(0.90f, 0.90f);
+                    mediaPlayer.setVolume(0.50f, 0.50f);
 //                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
 //                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
 
@@ -88,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        mediaPlayer = MediaPlayer.create(this, R.raw.unem);
+        mediaPlayer.setVolume(0.50f, 0.50f);
+        mediaPlayer.start();
 
         toggleMuteHomeButton.setChecked(true);
     }
