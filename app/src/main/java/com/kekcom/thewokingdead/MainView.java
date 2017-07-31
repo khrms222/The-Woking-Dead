@@ -860,7 +860,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
                 canvas.drawText(mLastStatusMessage, getPixelValueForDensity(100), getPixelValueForDensity(100), mUiTextPaint);
 
                 mUiTextPaint.setTextSize(75);
-                canvas.drawText("Enemies Killed: " + enemyKillCount, 0, mScreenYMax - getPixelValueForDensity(50), mUiTextPaint);
+                canvas.drawText("Kill Count: " + enemyKillCount, 0, mScreenYMax - getPixelValueForDensity(50), mUiTextPaint);
 
                 canvas.drawText("Level: " + mPlayerLevel, 0, getPixelValueForDensity(30), mUiTextPaint);
 
