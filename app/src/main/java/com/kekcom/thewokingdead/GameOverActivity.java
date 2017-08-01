@@ -23,6 +23,8 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
 
+        GameActivity.sfx(6);
+
         //setToFullScreen();
         MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.menu);

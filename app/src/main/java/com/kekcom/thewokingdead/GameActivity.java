@@ -33,7 +33,7 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         Context mContext = getApplicationContext();
 
-        mSoundIDs = new int[6];
+        mSoundIDs = new int[7];
         MainActivity.mediaPlayer.release();
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
         if (MainActivity.toggleMuteHomeButton.isChecked()) {
@@ -80,11 +80,12 @@ public class GameActivity extends Activity {
 
         // Load sounds
         mSoundIDs[0] = mSoundPool.load(this, R.raw.pain, 1);
-        mSoundIDs[1] = mSoundPool.load(this, R.raw.hit, 1);
+        mSoundIDs[1] = mSoundPool.load(this, R.raw.gonghittrimmed, 1);
         mSoundIDs[2] = mSoundPool.load(this, R.raw.zom3, 1);
         mSoundIDs[3] = mSoundPool.load(this, R.raw.zom2, 1);
         mSoundIDs[4] = mSoundPool.load(this, R.raw.zom1, 1);
         mSoundIDs[5] = mSoundPool.load(this, R.raw.stair, 1);
+        mSoundIDs[6] = mSoundPool.load(this, R.raw.asianrifftrimmed, 1);
         //mSoundPool.play(soundID, volume, volume, 1, 0, 1f);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
