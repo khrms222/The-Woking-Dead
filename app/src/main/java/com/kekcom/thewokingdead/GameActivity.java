@@ -17,7 +17,7 @@ import android.view.Window;
 public class GameActivity extends Activity {
     private static int[] mSoundIDs;
     private static SoundPool mSoundPool;
-    private static float volume;
+    private static float volume = 0.50f;
     public boolean canPlay = false;
     int sNumLoaded = 0;
     private MainView mMainView = null;
@@ -63,7 +63,7 @@ public class GameActivity extends Activity {
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        //volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         android.util.Log.v("SOUND", "test");
         //android.util.Log.v("SOUND","["+volume+"]["+mSoundPool.play(soundID, volume, volume, 1, 0, 1f)+"]");
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {

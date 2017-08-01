@@ -77,10 +77,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private int mPlayerDirection = 0;
 
-    private MainUI mCtrlUpArrow = null;
-    private MainUI mCtrlDownArrow = null;
-    private MainUI mCtrlLeftArrow = null;
-    private MainUI mCtrlRightArrow = null;
+    private MainUi mCtrlUpArrow = null;
+    private MainUi mCtrlDownArrow = null;
+    private MainUi mCtrlLeftArrow = null;
+    private MainUi mCtrlRightArrow = null;
 
     private Paint mUiTextPaint = null;
     private String mLastStatusMessage = "";
@@ -93,8 +93,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
     private HashMap<Integer, Bitmap> mGameTileBitmaps = new HashMap<Integer, Bitmap>();
     private List<FloorBase> mGameTiles = new ArrayList<FloorBase>();
 
-    private int mPlayerStartTileX = 0;
-    private int mPlayerStartTileY = 0;
+    private int mPlayerStartTileX = 3;
+    private int mPlayerStartTileY = 3;
 
     private int mTileWidth = 0;
     private int mTileHeight = 0;
@@ -104,7 +104,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private List<PlayerLife> playerLives;
 
-    private MainUI fireButton = null;
+    private MainUi fireButton = null;
 
     private int enemyKillCount = 0;
 
@@ -299,15 +299,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
                     if (playerLives.size() == 0) {
                         mGameRun = false;
-
+                        GameActivity.sfx(6);
                         Intent i = new Intent(mGameContext, GameOverActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         mGameContext.startActivity(i);
                     }
 
                     if ((collisionTile != null) && collisionTile.isBlockerTile()) {
-                        handleTileCollision(collisionTile);
-
+                        if (collisionTile.getType() != FloorBase.TYPE_EXIT) {
+                            handleTileCollision(collisionTile);
+                        }
                     } else {
                         enemy.setX(newX);
                         enemy.setY(newY);
@@ -374,7 +375,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 			}
 
             if ((collisionTile != null) && collisionTile.isBlockerTile()) {
-                handleTileCollision(collisionTile);
+                if (collisionTile.getType() != FloorBase.TYPE_EXIT) {
+                    handleTileCollision(collisionTile);
+                }
                 playerWeapon.setFiring(false);
             } else {
                 playerWeapon.setX(newX);
@@ -569,7 +572,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private void setFireButton(){
         if(fireButton == null){
-            fireButton = new MainUI(mGameContext, R.drawable.wpbf);
+            fireButton = new MainUi(mGameContext, R.drawable.wpbf);
             fireButton.setX(mScreenXMax - fireButton.getWidth());
             fireButton.setY(mScreenYMax - fireButton.getHeight());
         }

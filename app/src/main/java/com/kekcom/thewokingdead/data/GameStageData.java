@@ -35,12 +35,12 @@ public class GameStageData extends GameDAO {
 
     public static int getFieldIdPlayerStartTileX() {
 
-        return FIELD_ID_PLAYER_START_TILE_X;
+        return a;
     }
 
     public static int getFieldIdPlayerStartTileY() {
 
-        return FIELD_ID_PLAYER_START_TILE_Y;
+        return b;
     }
 
     private static String[][] RNGenie(int max) {
