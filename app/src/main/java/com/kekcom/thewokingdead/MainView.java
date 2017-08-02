@@ -635,7 +635,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
         updatingGameTiles = true;
 
         ArrayList<String> gameLevelData = mGameLevelTileData.getGameStageData(mPlayerStage, mPlayerLevel);
-
+        if (mPlayerLevel > 10) {
+            mGameRun = false;
+            GameActivity.sfx(6);
+            Intent i = new Intent(mGameContext, GameOverActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            mGameContext.startActivity(i);
+        }
         String levelTileData = gameLevelData.get(GameStageData.FIELD_ID_TILE_DATA);
 
         if (levelTileData == null) {
