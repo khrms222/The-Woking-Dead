@@ -1,133 +1,106 @@
 package com.kekcom.thewokingdead;
 
-import android.app.Activity;
-import android.view.MenuItem;
-import android.util.DisplayMetrics;
-
-import android.view.Menu;
-import android.content.Intent;
-import android.view.MenuInflater;
-
-import android.os.Bundle;
 import android.content.Context;
-import android.view.Window;
 
-/**
- * Created by Marcus on 7/29/2017.
- */
-
-public class MainUI extends GameObject{
-
-    private Context context = null;
-    private boolean isVisible = true;
-
+public class MainUI extends GameObject {
     public static final int STATE_NORMAL = 1;
     public static final int STATE_INACTIVE = 2;
     public static final int STATE_ACTIVE = 3;
     public static final int STATE_READY = 4;
-    private int state = STATE_NORMAL;
 
-    private int drawableStateNormal = 0;
-    private int drawableStateReady = 0;
-    private int drawableStateActive = 0;
-    private int drawableStateInactive = 0;
+    private int mState = STATE_NORMAL;
 
+    private int mDrawableStateNormal = 0;
+    private int mDrawableStateInactive = 0;
+    private int mDrawableStateActive = 0;
+    private int mDrawableStateReady = 0;
+    private boolean mVisible = true;
 
+    private Context mContext = null;
 
-
-    public MainUI( Context context, int draw){
-        super(context, draw);
-
-        this.context = context;
-
-        this.drawableStateNormal = draw;
-    }
-
-
-
-    // Checking game states whether inactive or normal
-    public boolean isStateInactive() {
-        return (this.state == STATE_INACTIVE);
-    }
-
-    public boolean isStateNormal() {
-        return (this.state == STATE_NORMAL);
-    }
-
-
-
-    // Checking visibilities
-    public boolean isVisible() {
-        return isVisible;
-    }
-    public void setVisible(boolean visible) {
-        this.isVisible = visible;
-    }
-
-
-
-    // Setting the different states of the game: inactive, ready, normal, active
-    public void setStateInactive() {
-        this.state = STATE_INACTIVE;
-        if (this.drawableStateInactive > 0) {
-            this.setDrawable(this.context, this.drawableStateInactive);
-        }
-    }
-
-    public void setStateReady() {
-        this.state = STATE_READY;
-        if (this.drawableStateReady > 0) {
-            this.setDrawable(this.context, this.drawableStateReady);
-        }
+    public MainUI(Context context, int drawable) {
+        super(context, drawable);
+        this.mContext = context;
+        this.mDrawableStateNormal = drawable;
     }
 
     public void setStateNormal() {
-        this.state = STATE_NORMAL;
-        if (this.drawableStateNormal > 0) {
-            this.setDrawable(this.context, this.drawableStateNormal);
+        this.mState = STATE_NORMAL;
+
+        if (this.mDrawableStateNormal > 0) {
+            this.setDrawable(this.mContext, this.mDrawableStateNormal);
+        }
+    }
+
+    public void setStateInactive() {
+        this.mState = STATE_INACTIVE;
+
+        if (this.mDrawableStateInactive > 0) {
+            this.setDrawable(this.mContext, this.mDrawableStateInactive);
         }
     }
 
     public void setStateActive() {
-        this.state = STATE_ACTIVE;
-        if (this.drawableStateActive > 0) {
-            this.setDrawable(this.context, this.drawableStateActive);
+        this.mState = STATE_ACTIVE;
+
+        if (this.mDrawableStateActive > 0) {
+            this.setDrawable(this.mContext, this.mDrawableStateActive);
         }
     }
 
+    public void setStateReady() {
+        this.mState = STATE_READY;
 
+        if (this.mDrawableStateReady > 0) {
+            this.setDrawable(this.mContext, this.mDrawableStateReady);
+        }
+    }
 
-    // Getters and Setters for drawable
     public int getDrawableStateNormal() {
-        return this.drawableStateNormal;
+        return this.mDrawableStateNormal;
     }
 
     public void setDrawableStateNormal(int mDrawableStateNormal) {
-        this.drawableStateNormal = drawableStateNormal;
+        this.mDrawableStateNormal = mDrawableStateNormal;
     }
 
     public int getDrawableStateInactive() {
-        return this.drawableStateInactive;
+        return this.mDrawableStateInactive;
     }
 
     public void setDrawableStateInactive(int mDrawableStateInactive) {
-        this.drawableStateInactive = drawableStateInactive;
+        this.mDrawableStateInactive = mDrawableStateInactive;
     }
 
     public int getDrawableStateActive() {
-        return this.drawableStateActive;
+        return this.mDrawableStateActive;
     }
 
     public void setDrawableStateActive(int mDrawableStateActive) {
-        this.drawableStateActive = drawableStateActive;
+        this.mDrawableStateActive = mDrawableStateActive;
     }
 
     public int getDrawableStateReady() {
-        return this.drawableStateReady;
+        return this.mDrawableStateReady;
     }
 
     public void setDrawableStateReady(int mDrawableStateReady) {
-        this.drawableStateReady = drawableStateReady;
+        this.mDrawableStateReady = mDrawableStateReady;
     }
 
+    public boolean isStateNormal() {
+        return (this.mState == STATE_NORMAL);
+    }
+
+    public boolean isStateInactive() {
+        return (this.mState == STATE_INACTIVE);
+    }
+
+    public boolean isVisible() {
+        return this.mVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.mVisible = visible;
+    }
 }
