@@ -30,7 +30,7 @@ public class GameActivity extends Activity {
     private Timer timer;
     private ArrayList<Integer> playlist;
     private int i = 0;
-    private int dur;
+    private int dur = 0;
 
     public static void sfx(int i) {
         mSoundPool.play(mSoundIDs[i], volume, volume, 1, 0, 1f);
@@ -72,7 +72,7 @@ public class GameActivity extends Activity {
         }
         MainActivity.mediaPlayer.start();
         timer = new Timer();
-        if (playlist.size() > 1) playNext();
+        if (playlist.size() > 1) playNext(MainActivity.mediaPlayer.getDuration() + 100 - dur);
 //        MainActivity.mediaPlayer.setLooping(true);
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -116,7 +116,7 @@ public class GameActivity extends Activity {
         setContentView(mMainView);
     }
 
-    public void playNext() {
+    public void playNext(final int time) {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -127,12 +127,12 @@ public class GameActivity extends Activity {
                 MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
                 if (i > playlist.size() - 1) {
                     i = 0;
-                    playNext();
+                    playNext(time);
                 } else {
-                    playNext();
+                    playNext(time);
                 }
             }
-        }, Math.max(0, MainActivity.mediaPlayer.getDuration() + 100 - dur));
+        }, Math.max(0, time));
     }
 
     @Override
@@ -178,7 +178,8 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if(MainActivity.mediaPlayer != null || !MainActivity.mediaPlayer.isPlaying()){
-            playNext();
+            int time = MainActivity.mediaPlayer.getDuration() + 100 - dur;
+            playNext(time);
             MainActivity.mediaPlayer.start();
 //            MainActivity.mediaPlayer.setLooping(true);
         }
