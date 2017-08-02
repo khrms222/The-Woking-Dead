@@ -13,12 +13,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final String APP_ID = "ca-app-pub-3940256099942544~3347511713";
 
     public static MediaPlayer mediaPlayer;
     public static ToggleButton toggleMuteHomeButton;
     public static ToggleButton toggleDebug;
     private Button button;
+
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.start();
 
         toggleMuteHomeButton.setChecked(true);
+
+        MobileAds.initialize(this, APP_ID);
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override

@@ -15,4 +15,6 @@
     <string name="game_over">Game Over</string>
     <string name="help">Help</string>
     <string name="exit_button">X</string>
+
+    <string name="ad_unit_id_banner">ca-app-pub-3940256099942544/6300978111</string>
 </resources>
