@@ -177,11 +177,15 @@ public class GameActivity extends Activity {
         }
     }
 
+    /*
     @Override
     public void onDestroy() {
-        if (MainActivity.mediaPlayer.isPlaying())
-            MainActivity.mediaPlayer.stop();
+        if(MainActivity.mediaPlayer != null) {
+            if (MainActivity.mediaPlayer.isPlaying())
+                MainActivity.mediaPlayer.stop();
+        }
         timer.cancel();
         super.onDestroy();
     }
+    */
 }
