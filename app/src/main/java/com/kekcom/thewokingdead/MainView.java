@@ -77,10 +77,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private int mPlayerDirection = 0;
 
-    private MainUi mCtrlUpArrow = null;
-    private MainUi mCtrlDownArrow = null;
-    private MainUi mCtrlLeftArrow = null;
-    private MainUi mCtrlRightArrow = null;
+    private MainUI mCtrlUpArrow = null;
+    private MainUI mCtrlDownArrow = null;
+    private MainUI mCtrlLeftArrow = null;
+    private MainUI mCtrlRightArrow = null;
 
     private Paint mUiTextPaint = null;
     private String mLastStatusMessage = "";
@@ -104,7 +104,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private List<PlayerLife> playerLives;
 
-    private MainUi fireButton = null;
+    private MainUI fireButton = null;
 
     private int enemyKillCount = 0;
 
@@ -572,7 +572,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback
 
     private void setFireButton(){
         if(fireButton == null){
-            fireButton = new MainUi(mGameContext, R.drawable.wpbf);
+            fireButton = new MainUI(mGameContext, R.drawable.wpbf);
             fireButton.setX(mScreenXMax - fireButton.getWidth());
             fireButton.setY(mScreenYMax - fireButton.getHeight());
         }

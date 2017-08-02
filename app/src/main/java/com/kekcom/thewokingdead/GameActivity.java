@@ -30,6 +30,7 @@ public class GameActivity extends Activity {
     private Timer timer;
     private ArrayList<Integer> playlist;
     private int i = 0;
+    private int dur;
 
     public static void sfx(int i) {
         mSoundPool.play(mSoundIDs[i], volume, volume, 1, 0, 1f);
@@ -43,6 +44,7 @@ public class GameActivity extends Activity {
         mSoundIDs = new int[7];
         MainActivity.mediaPlayer.release();
         playlist = new ArrayList<>();
+        playlist.add(R.raw.play);
         playlist.add(R.raw.nuke);
         playlist.add(R.raw.youstillplaying);
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
@@ -115,18 +117,22 @@ public class GameActivity extends Activity {
     }
 
     public void playNext() {
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 MainActivity.mediaPlayer.reset();
-                MainActivity.mediaPlayer = MediaPlayer.create(GameActivity.this, playlist.get(++i));
+                MainActivity.mediaPlayer = MediaPlayer.create(GameActivity.this, playlist.get(i++));
                 MainActivity.mediaPlayer.start();
                 MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
-                if (playlist.size() > i + 1) {
+                if (i > playlist.size() - 1) {
+                    i = 0;
+                    playNext();
+                } else {
                     playNext();
                 }
             }
-        }, MainActivity.mediaPlayer.getDuration() + 100);
+        }, Math.max(0, MainActivity.mediaPlayer.getDuration() + 100 - dur));
     }
 
     @Override
@@ -158,7 +164,8 @@ public class GameActivity extends Activity {
     @Override
     protected void onPause() {
         if(MainActivity.mediaPlayer != null || MainActivity.mediaPlayer.isPlaying()){
-
+            dur = MainActivity.mediaPlayer.getCurrentPosition();
+            this.timer.cancel();
             MainActivity.mediaPlayer.pause();
 //            MainActivity.mediaPlayer.setLooping(false);
         }
@@ -171,21 +178,10 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if(MainActivity.mediaPlayer != null || !MainActivity.mediaPlayer.isPlaying()){
-
+            playNext();
             MainActivity.mediaPlayer.start();
 //            MainActivity.mediaPlayer.setLooping(true);
         }
     }
 
-    /*
-    @Override
-    public void onDestroy() {
-        if(MainActivity.mediaPlayer != null) {
-            if (MainActivity.mediaPlayer.isPlaying())
-                MainActivity.mediaPlayer.stop();
-        }
-        timer.cancel();
-        super.onDestroy();
-    }
-    */
 }

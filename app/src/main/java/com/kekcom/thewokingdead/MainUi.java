@@ -2,7 +2,7 @@ package com.kekcom.thewokingdead;
 
 import android.content.Context;
 
-public class MainUi extends GameObject {
+public class MainUI extends GameObject {
     public static final int STATE_NORMAL = 1;
     public static final int STATE_INACTIVE = 2;
     public static final int STATE_ACTIVE = 3;
@@ -18,7 +18,7 @@ public class MainUi extends GameObject {
 
     private Context mContext = null;
 
-    public MainUi(Context context, int drawable) {
+    public MainUI(Context context, int drawable) {
         super(context, drawable);
         this.mContext = context;
         this.mDrawableStateNormal = drawable;
