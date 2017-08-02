@@ -51,13 +51,8 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
 
         backButton.setOnClickListener(this);
         playAgainButton.setOnClickListener(this);
-        boolean check = true;
-        while (check) {
-            if (System.currentTimeMillis() > timed) {
-                MainActivity.mediaPlayer.start();
-                check = false;
-            }
-        }
+        MainActivity.mediaPlayer.start();
+
         if (MainActivity.toggleMuteHomeButton.isChecked()) {
             MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
 //                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);

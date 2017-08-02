@@ -14,6 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class GameActivity extends Activity {
     private static int[] mSoundIDs;
     private static SoundPool mSoundPool;
@@ -23,6 +27,9 @@ public class GameActivity extends Activity {
     private MainView mMainView = null;
     private DisplayMetrics mMetrics = new DisplayMetrics();
     private float mScreenDensity;
+    private Timer timer;
+    private ArrayList<Integer> playlist;
+    private int i = 0;
 
     public static void sfx(int i) {
         mSoundPool.play(mSoundIDs[i], volume, volume, 1, 0, 1f);
@@ -35,7 +42,11 @@ public class GameActivity extends Activity {
 
         mSoundIDs = new int[7];
         MainActivity.mediaPlayer.release();
+        playlist = new ArrayList<>();
+        playlist.add(R.raw.nuke);
+        playlist.add(R.raw.youstillplaying);
         MainActivity.mediaPlayer = MediaPlayer.create(this, R.raw.play);
+
         if (MainActivity.toggleMuteHomeButton.isChecked()) {
             MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
 //                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -58,7 +69,9 @@ public class GameActivity extends Activity {
             //toggleMuteButton.setSoundEffectsEnabled(false);
         }
         MainActivity.mediaPlayer.start();
-        MainActivity.mediaPlayer.setLooping(true);
+        timer = new Timer();
+        if (playlist.size() > 1) playNext();
+//        MainActivity.mediaPlayer.setLooping(true);
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
@@ -101,6 +114,21 @@ public class GameActivity extends Activity {
         setContentView(mMainView);
     }
 
+    public void playNext() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MainActivity.mediaPlayer.reset();
+                MainActivity.mediaPlayer = MediaPlayer.create(GameActivity.this, playlist.get(++i));
+                MainActivity.mediaPlayer.start();
+                MainActivity.mediaPlayer.setVolume(0.50f, 0.50f);
+                if (playlist.size() > i + 1) {
+                    playNext();
+                }
+            }
+        }, MainActivity.mediaPlayer.getDuration() + 100);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -132,7 +160,7 @@ public class GameActivity extends Activity {
         if(MainActivity.mediaPlayer != null || MainActivity.mediaPlayer.isPlaying()){
 
             MainActivity.mediaPlayer.pause();
-            MainActivity.mediaPlayer.setLooping(false);
+//            MainActivity.mediaPlayer.setLooping(false);
         }
         super.onPause();
 
@@ -145,7 +173,15 @@ public class GameActivity extends Activity {
         if(MainActivity.mediaPlayer != null || !MainActivity.mediaPlayer.isPlaying()){
 
             MainActivity.mediaPlayer.start();
-            MainActivity.mediaPlayer.setLooping(true);
+//            MainActivity.mediaPlayer.setLooping(true);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (MainActivity.mediaPlayer.isPlaying())
+            MainActivity.mediaPlayer.stop();
+        timer.cancel();
+        super.onDestroy();
     }
 }

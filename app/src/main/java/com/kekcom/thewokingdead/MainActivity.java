@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, GameActivity.class);
+                button.setBackgroundResource(R.drawable.canvas_bg_01);
                 startActivity(i);
             }
         });
@@ -63,29 +64,29 @@ public class MainActivity extends AppCompatActivity {
 
                 //boolean toggleState = toggleMuteButton.isChecked();
                 if (toggleMuteHomeButton.isChecked()){
+                    toggleMuteHomeButton.setBackgroundResource(R.drawable.zcbggo);
                     mediaPlayer.setVolume(0.50f, 0.50f);
-//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-//                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-
-//                    Toast.makeText(MainActivity.this, "ON", Toast.LENGTH_SHORT);
-
-//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-//                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
-                    //toggleMuteButton.setSoundEffectsEnabled(true);
                 }
                 else {
-
+                    toggleMuteHomeButton.setBackgroundResource(R.drawable.canvas_bg_01);
                     mediaPlayer.setVolume(0, 0);
-//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-//                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-                    //Toast.makeText(MainActivity.this, "OFF", Toast.LENGTH_SHORT);
-
-//                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-//                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
-                    //toggleMuteButton.setSoundEffectsEnabled(false);
                 }
             }
         });
+
+        toggleDebug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //boolean toggleState = toggleMuteButton.isChecked();
+                if (!toggleDebug.isChecked()) {
+                    toggleDebug.setBackgroundResource(R.drawable.zcbggo);
+                } else {
+                    toggleDebug.setBackgroundResource(R.drawable.canvas_bg_01);
+                }
+            }
+        });
+
         mediaPlayer = MediaPlayer.create(this, R.raw.unem);
         mediaPlayer.setVolume(0.50f, 0.50f);
         mediaPlayer.start();
